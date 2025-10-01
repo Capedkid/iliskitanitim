@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import Lightbox from "@/components/Lightbox";
+import MiniPlayer from "@/components/MiniPlayer";
 
 function HeartDivider() {
   return (
@@ -20,6 +22,19 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [copied, setCopied] = useState(false);
+  const memoryImages = [
+    "/images/memories/1.jpg",
+    "/images/memories/2.jpg",
+    "/images/memories/3.jpg",
+  ];
+  const memoryCaptions = [
+    "İlk gün — gülüşün her şeyi başlattı",
+    "Birlikte yürürken zaman yavaşlıyor",
+    "Mavi ve bordo aynı karede",
+  ];
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   const onTogglePlay = async () => {
     if (!audioRef.current) return;
@@ -41,6 +56,29 @@ export default function Home() {
     }
   };
 
+  // Observe sections to update active nav link
+  const sectionsRef = useRef<{ id: string; el: HTMLElement | null }[]>([]);
+  sectionsRef.current = [
+    { id: "memories", el: typeof document !== "undefined" ? document.getElementById("memories") : null },
+    { id: "story", el: typeof document !== "undefined" ? document.getElementById("story") : null },
+    { id: "daily-note", el: typeof document !== "undefined" ? document.getElementById("daily-note") : null },
+  ];
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible && visible.target.id) setActiveId(visible.target.id);
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] }
+    );
+    sectionsRef.current.forEach((s) => s.el && observer.observe(s.el));
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="min-h-dvh flex flex-col">
       <header className="px-6 sm:px-10 py-6 flex items-center justify-between">
@@ -48,9 +86,9 @@ export default function Home() {
           <span className="text-ours-blue">R</span>avy <span className="text-ours-burgundy">&</span> Mami
         </div>
         <nav className="hidden sm:flex items-center gap-6 text-sm">
-          <a className="hover:text-rose-600 transition-colors" href="#story">Hikayemiz</a>
-          <a className="hover:text-rose-600 transition-colors" href="#memories">Anılar</a>
-          <a className="hover:text-rose-600 transition-colors" href="#daily-note">Bugünün Notu</a>
+          <a className={`transition-colors ${activeId === "story" ? "text-rose-600" : "hover:text-rose-600"}`} href="#story">Hikayemiz</a>
+          <a className={`transition-colors ${activeId === "memories" ? "text-rose-600" : "hover:text-rose-600"}`} href="#memories">Anılar</a>
+          <a className={`transition-colors ${activeId === "daily-note" ? "text-rose-600" : "hover:text-rose-600"}`} href="#daily-note">Bugünün Notu</a>
         </nav>
       </header>
 
@@ -103,13 +141,23 @@ export default function Home() {
         {/* Featured placeholders */}
         <section id="memories" className="px-6 sm:px-10 pb-16">
           <div className="mx-auto max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="group relative overflow-hidden rounded-2xl bg-white/70 ring-1 ring-rose-100/80 backdrop-blur p-5 hover:shadow-lg hover:shadow-rose-500/10 transition-all">
-                <div className="h-40 rounded-xl bg-gradient-to-br from-rose-50 via-white to-rose-100 ring-1 ring-rose-100" />
-                <h3 className="mt-4 font-display text-xl tracking-wide">Anı Başlığı</h3>
+            {memoryImages.map((src, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  setLightboxIndex(i);
+                  setLightboxOpen(true);
+                }}
+                className="text-left group relative overflow-hidden rounded-2xl bg-white/70 ring-1 ring-rose-100/80 backdrop-blur p-5 hover:shadow-lg hover:shadow-rose-500/10 transition-all"
+              >
+                <div className="h-40 rounded-xl ring-1 ring-rose-100 overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt={`Anı ${i + 1}`} className="h-full w-full object-cover group-hover:scale-[1.02] transition-transform" />
+                </div>
+                <h3 className="mt-4 font-display text-xl tracking-wide">Anı {i + 1}</h3>
                 <p className="text-sm text-black/70">Kısa bir açıklama…</p>
                 <span className="absolute right-4 top-4 text-xs text-ours-blue">{i + 1 < 10 ? `0${i + 1}` : i + 1}</span>
-              </div>
+              </button>
             ))}
           </div>
         </section>
@@ -190,6 +238,18 @@ export default function Home() {
         {/* Uncomment to add an OGG fallback if you have it */}
         {/* <source src="/audio/mavi.ogg" type="audio/ogg" /> */}
       </audio>
+
+      <MiniPlayer getAudio={() => audioRef.current} />
+
+      <Lightbox
+        isOpen={lightboxOpen}
+        images={memoryImages}
+        captions={memoryCaptions}
+        index={lightboxIndex}
+        onClose={() => setLightboxOpen(false)}
+        onPrev={() => setLightboxIndex((i) => (i - 1 + memoryImages.length) % memoryImages.length)}
+        onNext={() => setLightboxIndex((i) => (i + 1) % memoryImages.length)}
+      />
     </div>
   );
 }
