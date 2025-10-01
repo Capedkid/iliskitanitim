@@ -1,0 +1,3 @@
+Place your song file at public/mavi.mp3
+Suggested: a short preview clip for fair use during development.
+
