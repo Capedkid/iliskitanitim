@@ -284,7 +284,7 @@ export default function Home() {
           >
             Bugünün Notu
           </button>
-          <a className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/game">Oyun 💖</a>
+          <a className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/game/selection">Oyun 💖</a>
         </nav>
       </header>
 

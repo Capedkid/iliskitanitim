@@ -1,198 +1,21 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-interface Heart {
-  id: number;
-  x: number;
-  y: number;
-  color: 'blue' | 'burgundy';
-  speed: number;
-}
+export default function GamePage() {
+  const router = useRouter();
 
-export default function Game() {
-  const [score, setScore] = useState(0);
-  const [hearts, setHearts] = useState<Heart[]>([]);
-  const [gameActive, setGameActive] = useState(false);
-  const [message, setMessage] = useState("");
-  const gameAreaRef = useRef<HTMLDivElement>(null);
-  const heartIdRef = useRef(0);
-
-  const startGame = () => {
-    setGameActive(true);
-    setScore(0);
-    setHearts([]);
-    setMessage("");
-  };
-
-  const stopGame = () => {
-    setGameActive(false);
-    setHearts([]);
-  };
-
-  // Heart generation
   useEffect(() => {
-    if (!gameActive) return;
-
-    const interval = setInterval(() => {
-      if (gameAreaRef.current) {
-        const newHeart: Heart = {
-          id: heartIdRef.current++,
-          x: Math.random() * (gameAreaRef.current.clientWidth - 40),
-          y: -40,
-          color: Math.random() > 0.5 ? 'blue' : 'burgundy',
-          speed: 2 + Math.random() * 3
-        };
-        setHearts(prev => [...prev, newHeart]);
-      }
-    }, 800);
-
-    return () => clearInterval(interval);
-  }, [gameActive]);
-
-  // Heart movement
-  useEffect(() => {
-    if (!gameActive) return;
-
-    const interval = setInterval(() => {
-      setHearts(prev => {
-        const updated = prev.map(heart => ({
-          ...heart,
-          y: heart.y + heart.speed
-        })).filter(heart => heart.y < 600);
-
-        return updated;
-      });
-    }, 16);
-
-    return () => clearInterval(interval);
-  }, [gameActive]);
-
-  const catchHeart = (heartId: number, color: 'blue' | 'burgundy') => {
-    setHearts(prev => prev.filter(h => h.id !== heartId));
-    setScore(prev => prev + 1);
-    
-    const messages = {
-      blue: ["Mavi kalp yakalandı! 💙", "Senin rengin! 💙", "Mavi huzur! 💙"],
-      burgundy: ["Bordo kalp yakalandı! ❤️", "Onun rengi! ❤️", "Bordo tutku! ❤️"]
-    };
-    
-    const randomMessage = messages[color][Math.floor(Math.random() * messages[color].length)];
-    setMessage(randomMessage);
-    
-    setTimeout(() => setMessage(""), 2000);
-  };
+    // Ana oyun sayfasına yönlendir
+    router.push("/game/selection");
+  }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-20">
-        <div 
-          className="w-full h-full"
-          style={{
-            backgroundImage: "url('/patterns/romance-scatter.svg')",
-            backgroundSize: "320px 320px"
-          }}
-        />
-      </div>
-
-      <div className="relative z-10 p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Link href="/" className="font-display text-xl">
-            <span className="text-blue-400">R</span>avy <span className="text-red-400">&</span> <span className="text-white">M</span>ami
-          </Link>
-          <div className="text-right">
-            <div className="text-2xl font-bold">Skor: {score}</div>
-            <div className="text-sm text-gray-400">Kalp Toplama Oyunu</div>
-          </div>
-        </div>
-
-        {/* Game Controls */}
-        <div className="text-center mb-8">
-          {!gameActive ? (
-            <button
-              onClick={startGame}
-              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-red-500 rounded-full text-xl font-bold hover:scale-105 transition-transform"
-            >
-              Oyunu Başlat 💖
-            </button>
-          ) : (
-            <button
-              onClick={stopGame}
-              className="px-8 py-4 bg-gray-600 rounded-full text-xl font-bold hover:scale-105 transition-transform"
-            >
-              Oyunu Durdur ⏸️
-            </button>
-          )}
-        </div>
-
-        {/* Message */}
-        {message && (
-          <div className="text-center mb-4">
-            <div className="inline-block bg-white/20 backdrop-blur px-6 py-3 rounded-full text-lg font-medium">
-              {message}
-            </div>
-          </div>
-        )}
-
-        {/* Game Area */}
-        <div
-          ref={gameAreaRef}
-          className="relative w-full h-[600px] bg-black/30 backdrop-blur rounded-3xl border-2 border-white/20 overflow-hidden mx-auto max-w-4xl"
-          onMouseMove={(e) => {
-            if (!gameActive) return;
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            // Check if mouse is near any heart
-            hearts.forEach(heart => {
-              const distance = Math.sqrt((x - heart.x - 20) ** 2 + (y - heart.y - 20) ** 2);
-              if (distance < 30) {
-                catchHeart(heart.id, heart.color);
-              }
-            });
-          }}
-        >
-          {/* Hearts */}
-          {hearts.map(heart => (
-            <div
-              key={heart.id}
-              className={`absolute w-8 h-8 text-2xl cursor-pointer transition-transform hover:scale-125 ${
-                heart.color === 'blue' ? 'text-blue-400' : 'text-red-400'
-              }`}
-              style={{
-                left: heart.x,
-                top: heart.y,
-              }}
-              onClick={() => catchHeart(heart.id, heart.color)}
-            >
-              💖
-            </div>
-          ))}
-
-          {/* Instructions */}
-          {!gameActive && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-4xl mb-4">💖</div>
-                <div className="text-xl mb-2">Kalp Toplama Oyunu</div>
-                <div className="text-gray-400">
-                  Düşen kalpleri yakala!<br />
-                  Mavi ve bordo kalpler seni bekliyor 💙❤️
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Instructions */}
-        <div className="text-center mt-8 text-gray-400">
-          <p>💡 Kalplere tıklayarak veya fare ile yakalayarak puan kazan!</p>
-          <p className="text-sm mt-2">Mobilde: Kalplere dokun!</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-fuchsia-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-4xl mb-4">💖</div>
+        <p className="text-rose-600">Oyunlar yükleniyor...</p>
       </div>
     </div>
   );
