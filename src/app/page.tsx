@@ -23,9 +23,9 @@ export default function Home() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [copied, setCopied] = useState(false);
   const memoryImages = [
-    "/images/memories/1.jpg",
-    "/images/memories/2.jpg",
-    "/images/memories/3.jpg",
+    "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=1200&auto=format&fit=crop", 
+    "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1200&auto=format&fit=crop",
   ];
   const memoryCaptions = [
     "İlk gün — gülüşün her şeyi başlattı",
@@ -83,7 +83,7 @@ export default function Home() {
     <div className="min-h-dvh flex flex-col">
       <header className="px-6 sm:px-10 py-6 flex items-center justify-between">
         <div className="font-display text-xl sm:text-2xl tracking-wide">
-          <span className="text-ours-blue">R</span>avy <span className="text-ours-burgundy">&</span> Mami
+          <span className="text-ours-blue">R</span>avy <span className="text-ours-burgundy">&</span> <span className="text-black">M</span>ami
         </div>
         <nav className="hidden sm:flex items-center gap-6 text-sm">
           <a className={`transition-colors ${activeId === "story" ? "text-rose-600" : "hover:text-rose-600"}`} href="#story">Hikayemiz</a>
@@ -122,12 +122,7 @@ export default function Home() {
             </div>
 
             <div className="relative">
-              <div className="relative overflow-hidden rounded-3xl ring-1 ring-rose-300/50 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
-                <div className="aspect-[4/3] sm:aspect-[5/3] bg-rose-50">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/hero-sample.svg" alt="Romantik örnek görsel" className="h-full w-full object-cover" />
-                </div>
-              </div>
+              <ParallaxHeroImage />
               <div className="absolute -left-6 -top-6 h-24 w-24 rounded-full bg-ours-blue/15 blur-2xl" />
               <div className="absolute -right-8 -bottom-8 h-28 w-28 rounded-full bg-ours-burgundy/20 blur-2xl" />
             </div>
@@ -150,9 +145,13 @@ export default function Home() {
                 }}
                 className="text-left group relative overflow-hidden rounded-2xl bg-white/70 ring-1 ring-rose-100/80 backdrop-blur p-5 hover:shadow-lg hover:shadow-rose-500/10 transition-all"
               >
-                <div className="h-40 rounded-xl ring-1 ring-rose-100 overflow-hidden">
+                <div className="h-40 rounded-xl ring-1 ring-rose-100 overflow-hidden bg-rose-50">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={src} alt={`Anı ${i + 1}`} className="h-full w-full object-cover group-hover:scale-[1.02] transition-transform" />
+                  <img 
+                    src={src} 
+                    alt={`Anı ${i + 1}`} 
+                    className="h-full w-full object-cover group-hover:scale-[1.02] transition-transform"
+                  />
                 </div>
                 <h3 className="mt-4 font-display text-xl tracking-wide">Anı {i + 1}</h3>
                 <p className="text-sm text-black/70">Kısa bir açıklama…</p>
@@ -250,6 +249,43 @@ export default function Home() {
         onPrev={() => setLightboxIndex((i) => (i - 1 + memoryImages.length) % memoryImages.length)}
         onNext={() => setLightboxIndex((i) => (i + 1) % memoryImages.length)}
       />
+    </div>
+  );
+}
+
+function ParallaxHeroImage() {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return; // respect reduced motion
+    const onScroll = () => {
+      if (!containerRef.current || !imgRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (!inView) return;
+      const mid = (rect.top + rect.bottom) / 2;
+      const centerOffset = (mid - window.innerHeight / 2) / window.innerHeight; // -0.5..0.5
+      const translate = Math.max(-10, Math.min(10, -centerOffset * 20)); // clamp ±10px
+      imgRef.current.style.transform = `translateY(${translate}px) scale(1.02)`;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const src = "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop";
+
+  return (
+    <div ref={containerRef} className="relative overflow-hidden rounded-3xl ring-1 ring-rose-300/50 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+      <div className="aspect-[4/3] sm:aspect-[5/3] bg-rose-50 relative">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img ref={imgRef} src={src} alt="Hero" className="h-full w-full object-cover transition-transform duration-200 will-change-transform" />
+        {/* overlay gradient */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-rose-50/50 via-white/10 to-rose-100/50" />
+        {/* subtle grain */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)", backgroundSize: "3px 3px", color: "#000" }} />
+      </div>
     </div>
   );
 }

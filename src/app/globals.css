@@ -44,8 +44,14 @@
 }
 
 body {
-  /* Soft gradient background for romance vibe */
+  /* Soft gradient base + micro dots + hearts pattern */
   background:
+    /* scattered hearts+dots (randomized tile 320px) */
+    url('/patterns/romance-scatter.svg') repeat,
+    /* micro dots layers */
+    radial-gradient(circle at 12px 12px, color(from var(--ours-blue) srgb r g b / 0.06) 2px, transparent 2px) 0 0 / 32px 32px,
+    radial-gradient(circle at 26px 26px, color(from var(--ours-burgundy) srgb r g b / 0.05) 2px, transparent 2px) 0 0 / 32px 32px,
+    /* base soft gradients */
     radial-gradient(1200px 600px at 10% 0%, color(display-p3 1 0.92 0.96 / 0.6), transparent 60%),
     radial-gradient(1200px 600px at 90% 10%, color(display-p3 0.98 0.86 0.93 / 0.5), transparent 60%),
     var(--background);

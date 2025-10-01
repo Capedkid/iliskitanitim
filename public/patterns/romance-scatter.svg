@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" role="img" aria-label="romantic scatter hearts and dots">
+  <defs>
+    <g id="heart10Blue">
+      <path d="M0 10C-4.5 7 -12.5 1.5 -16.5 -3C-19.2 -6.4 -18.6 -13 -13.8 -15.2C-10.6 -16.7 -7 -15.7 -5 -13.7L0 -8.6L5 -13.7C7 -15.7 10.6 -16.7 13.8 -15.2C18.6 -13 19.2 -6.4 16.5 -3C12.5 1.5 4.5 7 0 10Z" fill="#3b82f6" fill-opacity="0.08" stroke="#3b82f6" stroke-opacity="0.12" stroke-width="0.8"/>
+    </g>
+    <g id="heart10Burgundy">
+      <path d="M0 10C-4.5 7 -12.5 1.5 -16.5 -3C-19.2 -6.4 -18.6 -13 -13.8 -15.2C-10.6 -16.7 -7 -15.7 -5 -13.7L0 -8.6L5 -13.7C7 -15.7 10.6 -16.7 13.8 -15.2C18.6 -13 19.2 -6.4 16.5 -3C12.5 1.5 4.5 7 0 10Z" fill="#6b0f1a" fill-opacity="0.08" stroke="#6b0f1a" stroke-opacity="0.12" stroke-width="0.8"/>
+    </g>
+  </defs>
+
+  <rect width="320" height="320" fill="transparent"/>
+
+  <!-- Random hearts (10px) at varied positions, mixed blue/burgundy -->
+  <use href="#heart10Blue" transform="translate(40 48) rotate(-8)"/>
+  <use href="#heart10Burgundy" transform="translate(110 30) rotate(14)"/>
+  <use href="#heart10Blue" transform="translate(180 68) rotate(-18)"/>
+  <use href="#heart10Burgundy" transform="translate(260 44) rotate(9)"/>
+  <use href="#heart10Burgundy" transform="translate(72 132) rotate(6)"/>
+  <use href="#heart10Blue" transform="translate(150 128) rotate(-12)"/>
+  <use href="#heart10Burgundy" transform="translate(230 140) rotate(20)"/>
+  <use href="#heart10Blue" transform="translate(36 210) rotate(-16)"/>
+  <use href="#heart10Burgundy" transform="translate(128 210) rotate(8)"/>
+  <use href="#heart10Blue" transform="translate(208 228) rotate(-6)"/>
+  <use href="#heart10Burgundy" transform="translate(288 200) rotate(14)"/>
+  <use href="#heart10Blue" transform="translate(92 280) rotate(-10)"/>
+  <use href="#heart10Burgundy" transform="translate(170 292) rotate(5)"/>
+  <use href="#heart10Blue" transform="translate(252 276) rotate(-12)"/>
+
+  <!-- Random dots (mavi / bordo) at varied sizes and opacities -->
+  <g>
+    <circle cx="22" cy="22" r="2" fill="#3b82f6" fill-opacity="0.08"/>
+    <circle cx="70" cy="18" r="1.5" fill="#6b0f1a" fill-opacity="0.07"/>
+    <circle cx="96" cy="52" r="1.8" fill="#3b82f6" fill-opacity="0.06"/>
+    <circle cx="142" cy="36" r="1.6" fill="#6b0f1a" fill-opacity="0.07"/>
+    <circle cx="198" cy="18" r="1.8" fill="#3b82f6" fill-opacity="0.07"/>
+    <circle cx="286" cy="28" r="1.4" fill="#6b0f1a" fill-opacity="0.07"/>
+    <circle cx="30" cy="88" r="1.6" fill="#3b82f6" fill-opacity="0.06"/>
+    <circle cx="88" cy="104" r="1.9" fill="#6b0f1a" fill-opacity="0.07"/>
+    <circle cx="128" cy="96" r="1.6" fill="#3b82f6" fill-opacity="0.06"/>
+    <circle cx="188" cy="112" r="1.7" fill="#6b0f1a" fill-opacity="0.07"/>
+    <circle cx="240" cy="88" r="1.5" fill="#3b82f6" fill-opacity="0.06"/>
+    <circle cx="300" cy="110" r="1.7" fill="#6b0f1a" fill-opacity="0.07"/>
+    <circle cx="18" cy="158" r="1.6" fill="#6b0f1a" fill-opacity="0.07"/>
+    <circle cx="62" cy="182" r="2" fill="#3b82f6" fill-opacity="0.08"/>
+    <circle cx="120" cy="164" r="1.5" fill="#6b0f1a" fill-opacity="0.07"/>
+    <circle cx="168" cy="184" r="1.6" fill="#3b82f6" fill-opacity="0.06"/>
+    <circle cx="210" cy="170" r="1.9" fill="#6b0f1a" fill-opacity="0.07"/>
+    <circle cx="278" cy="162" r="1.6" fill="#3b82f6" fill-opacity="0.06"/>
+    <circle cx="40" cy="238" r="1.7" fill="#3b82f6" fill-opacity="0.07"/>
+    <circle cx="96" cy="232" r="1.5" fill="#6b0f1a" fill-opacity="0.07"/>
+    <circle cx="152" cy="246" r="1.9" fill="#3b82f6" fill-opacity="0.08"/>
+    <circle cx="204" cy="254" r="1.6" fill="#6b0f1a" fill-opacity="0.07"/>
+    <circle cx="260" cy="236" r="1.7" fill="#3b82f6" fill-opacity="0.06"/>
+    <circle cx="300" cy="280" r="1.5" fill="#6b0f1a" fill-opacity="0.07"/>
+  </g>
+</svg>
+
