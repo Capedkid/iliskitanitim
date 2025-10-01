@@ -97,12 +97,12 @@ export default function Home() {
         <section className="px-6 sm:px-10 pt-10 pb-16 sm:pt-16 sm:pb-24">
           <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             <div>
-              <h1 className="font-display text-[40px] leading-[1.1] sm:text-[56px] md:text-[64px]">
+              <h1 className="font-display text-[40px] leading-[1.08] sm:text-[56px] md:text-[64px] tracking-tight">
                 Seninle Her Gün
                 <br />
                 <span className="text-rose-600">Bir Hikaye</span>
               </h1>
-              <p className="mt-4 text-base sm:text-lg text-black/70 dark:text-white/80 max-w-prose">
+              <p className="mt-5 text-base sm:text-lg text-black/70 dark:text-white/80 max-w-prose leading-relaxed">
                 Bu sayfa, mavinin huzurunu ve bordonun tutkusunu bir araya getiriyor.
                 Anılar, notlar ve şarkılarla dolu küçük bir evimiz olsun.
               </p>
@@ -137,26 +137,32 @@ export default function Home() {
         <section id="memories" className="px-6 sm:px-10 pb-16">
           <div className="mx-auto max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {memoryImages.map((src, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  setLightboxIndex(i);
-                  setLightboxOpen(true);
-                }}
-                className="text-left group relative overflow-hidden rounded-2xl bg-white/70 ring-1 ring-rose-100/80 backdrop-blur p-5 hover:shadow-lg hover:shadow-rose-500/10 transition-all"
-              >
-                <div className="h-40 rounded-xl ring-1 ring-rose-100 overflow-hidden bg-rose-50">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={src} 
-                    alt={`Anı ${i + 1}`} 
-                    className="h-full w-full object-cover group-hover:scale-[1.02] transition-transform"
-                  />
-                </div>
-                <h3 className="mt-4 font-display text-xl tracking-wide">Anı {i + 1}</h3>
-                <p className="text-sm text-black/70">Kısa bir açıklama…</p>
-                <span className="absolute right-4 top-4 text-xs text-ours-blue">{i + 1 < 10 ? `0${i + 1}` : i + 1}</span>
-              </button>
+              <div className="group">
+                <button
+                  key={i}
+                  onClick={() => {
+                    setLightboxIndex(i);
+                    setLightboxOpen(true);
+                  }}
+                  className="relative overflow-hidden rounded-3xl ring-1 ring-rose-300/50 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] hover:-translate-y-1 transition-all duration-300 w-full"
+                >
+                  <div className="aspect-[4/3] relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img 
+                      src={src} 
+                      alt={`Anı ${i + 1}`} 
+                      className="h-full w-full object-cover group-hover:scale-[1.02] transition-transform"
+                    />
+                    {/* Overlay gradient like hero */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-rose-50/20 via-white/5 to-rose-100/20" />
+                    {/* Subtle grain */}
+                    <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)", backgroundSize: "3px 3px", color: "#000" }} />
+                    {/* Number badge */}
+                    <span className="absolute right-4 top-4 text-xs text-white/90 bg-black/40 px-2 py-1 rounded-full backdrop-blur">{i + 1 < 10 ? `0${i + 1}` : i + 1}</span>
+                  </div>
+                </button>
+                <h3 className="mt-3 font-display text-xl tracking-wide text-white text-center">Anı {i + 1}</h3>
+              </div>
             ))}
           </div>
         </section>
@@ -164,7 +170,7 @@ export default function Home() {
         {/* Timeline */}
         <section id="story" className="px-6 sm:px-10 pb-20">
           <div className="mx-auto max-w-4xl">
-            <h2 className="font-display text-3xl sm:text-4xl mb-8">Hikayemiz</h2>
+            <h2 className="font-display text-3xl sm:text-4xl mb-10 tracking-tight">Hikayemiz</h2>
             <ol className="relative border-s border-rose-100">
               {[
                 { title: "İlk Mesaj", desc: "Kalplerin ilk kıvılcımı." },
@@ -174,9 +180,9 @@ export default function Home() {
               ].map((item, idx) => (
                 <li key={idx} className="ms-4 py-4">
                   <div className="absolute w-2 h-2 rounded-full bg-rose-500 -start-1.5 mt-2 shadow-[0_0_0_4px_rgba(255,143,163,0.25)]" />
-                  <div className="rounded-xl bg-white/70 backdrop-blur ring-1 ring-rose-100 p-4 transition-transform duration-300 hover:-translate-y-0.5">
-                    <h3 className="font-display text-lg">{item.title}</h3>
-                    <p className="text-sm text-black/70">{item.desc}</p>
+                  <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                    <h3 className="font-display text-lg tracking-wide text-white">{item.title}</h3>
+                    <p className="text-sm text-white/80 leading-relaxed mt-2">{item.desc}</p>
                   </div>
                 </li>
               ))}
@@ -186,14 +192,14 @@ export default function Home() {
 
         {/* Daily Note */}
         <section id="daily-note" className="px-6 sm:px-10 pb-24">
-          <div className="mx-auto max-w-3xl rounded-2xl bg-white/70 backdrop-blur ring-1 ring-rose-100 p-6">
-            <h2 className="font-display text-2xl mb-3">Bugünün Notu</h2>
-            <p className="text-black/80" id="daily-note-text">
+          <div className="mx-auto max-w-3xl rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-8 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] transition-all duration-300">
+            <h2 className="font-display text-2xl mb-4 tracking-tight text-white">Bugünün Notu</h2>
+            <p className="text-white/80 leading-relaxed text-lg" id="daily-note-text">
               Güne senin sesinle başlamak, günün en güzel kısmı.
             </p>
-            <div className="mt-4">
+            <div className="mt-6">
               <button
-                className="inline-flex items-center justify-center rounded-full px-4 py-2 ring-1 ring-black/10 bg-white/80 hover:bg-white/95 transition-colors text-sm"
+                className="inline-flex items-center justify-center rounded-full px-5 py-3 ring-1 ring-white/20 bg-white/10 hover:bg-white/20 hover:ring-white/30 transition-all duration-300 text-sm font-medium text-white"
                 onClick={async () => {
                   const text = document.getElementById("daily-note-text")?.textContent || "";
                   try {
