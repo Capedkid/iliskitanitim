@@ -22,6 +22,96 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [copied, setCopied] = useState(false);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [volume, setVolume] = useState(0.7);
+  const [isShuffled, setIsShuffled] = useState(false);
+  const [repeatMode, setRepeatMode] = useState<'none' | 'one' | 'all'>('none');
+  
+  // Otomatik şarkı tarama sistemi
+  const [playlist, setPlaylist] = useState<Array<{
+    id: number;
+    title: string;
+    artist: string;
+    src: string;
+    duration: string;
+  }>>([]);
+
+  // Dosya adından şarkı bilgilerini çıkarma fonksiyonu
+  const parseAudioFilename = (filename: string) => {
+    // .mp3 uzantısını kaldır
+    const nameWithoutExt = filename.replace(/\.mp3$/i, '');
+    
+    // "Şarkı Adı - Sanatçı" formatını parse et
+    const parts = nameWithoutExt.split(' - ');
+    
+    if (parts.length >= 2) {
+      return {
+        title: parts[0].trim(),
+        artist: parts.slice(1).join(' - ').trim(), // Birden fazla " - " varsa
+        originalFilename: filename // Orijinal dosya adını sakla
+      };
+    } else {
+      // Format uygun değilse, dosya adını şarkı adı olarak kullan
+      return {
+        title: nameWithoutExt,
+        artist: "Bilinmeyen Sanatçı",
+        originalFilename: filename
+      };
+    }
+  };
+
+  // Şarkı dosyalarını otomatik tarama
+  useEffect(() => {
+    const scanAudioFiles = async () => {
+      try {
+        // Public klasöründeki audio dosyalarını taramak için API endpoint'i kullanacağız
+        const response = await fetch('/api/audio-files');
+        if (response.ok) {
+          const files = await response.json();
+          const audioFiles = files
+            .filter((file: string) => file.toLowerCase().endsWith('.mp3'))
+            .map((file: string, index: number) => {
+              const { title, artist, originalFilename } = parseAudioFilename(file);
+              return {
+                id: index + 1,
+                title,
+                artist,
+                src: `/audio/${originalFilename}`, // Orijinal dosya adını kullan
+                duration: "0:00" // Gerçek süre için audio element'ten alınabilir
+              };
+            });
+          
+          // Mavi şarkısını ilk sıraya koy
+          const maviIndex = audioFiles.findIndex((song: { title: string; src: string }) => 
+            song.title.toLowerCase().includes('mavi') || 
+            song.src.includes('mavi.mp3')
+          );
+          
+          if (maviIndex > 0) {
+            // Mavi şarkısını bul ve ilk sıraya taşı
+            const maviSong = audioFiles[maviIndex];
+            const otherSongs = audioFiles.filter((_: any, index: number) => index !== maviIndex);
+            setPlaylist([maviSong, ...otherSongs]);
+          } else {
+            setPlaylist(audioFiles);
+          }
+        }
+      } catch (error) {
+        console.error('Şarkı dosyaları taranamadı:', error);
+        // Fallback: mevcut şarkıyı kullan
+        setPlaylist([{
+          id: 1,
+          title: "Mavi",
+          artist: "Gökhan Türkmen",
+          src: "/audio/mavi.mp3",
+          duration: "3:45"
+        }]);
+      }
+    };
+
+    scanAudioFiles();
+  }, []);
+
   const memoryImages = [
     "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=800&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=1200&auto=format&fit=crop", 
@@ -35,6 +125,25 @@ export default function Home() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [activeId, setActiveId] = useState<string | null>(null);
+
+  // Smooth scroll function
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
+  const currentTrack = playlist[currentTrackIndex] || playlist[0] || {
+    id: 1,
+    title: "Mavi",
+    artist: "Gökhan Türkmen", 
+    src: "/audio/mavi.mp3",
+    duration: "3:45"
+  };
 
   const onTogglePlay = async () => {
     if (!audioRef.current) return;
@@ -54,6 +163,77 @@ export default function Home() {
       console.error("Audio play error", err);
       alert("Şarkı çalınamadı. Dosya formatını veya yolu kontrol edin.");
     }
+  };
+
+  const playNext = () => {
+    if (repeatMode === 'one') {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play();
+      }
+      return;
+    }
+    
+    let nextIndex;
+    if (isShuffled) {
+      nextIndex = Math.floor(Math.random() * playlist.length);
+    } else {
+      nextIndex = (currentTrackIndex + 1) % playlist.length;
+    }
+    
+    setCurrentTrackIndex(nextIndex);
+    if (audioRef.current) {
+      audioRef.current.src = playlist[nextIndex].src;
+      audioRef.current.load();
+      if (isPlaying) {
+        audioRef.current.play();
+      }
+    }
+  };
+
+  const playPrevious = () => {
+    // If we are a few seconds into the current track, just restart it
+    const audio = audioRef.current;
+    if (audio && audio.currentTime > 3) {
+      audio.currentTime = 0;
+      if (isPlaying) {
+        audio.play();
+      }
+      return;
+    }
+
+    let prevIndex;
+    if (isShuffled) {
+      prevIndex = Math.floor(Math.random() * playlist.length);
+    } else {
+      prevIndex = currentTrackIndex === 0 ? playlist.length - 1 : currentTrackIndex - 1;
+    }
+    
+    setCurrentTrackIndex(prevIndex);
+    if (audioRef.current) {
+      audioRef.current.src = playlist[prevIndex].src;
+      audioRef.current.load();
+      if (isPlaying) {
+        audioRef.current.play();
+      }
+    }
+  };
+
+  const handleVolumeChange = (newVolume: number) => {
+    setVolume(newVolume);
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
+    }
+  };
+
+  const toggleShuffle = () => {
+    setIsShuffled(!isShuffled);
+  };
+
+  const toggleRepeat = () => {
+    const modes: ('none' | 'one' | 'all')[] = ['none', 'one', 'all'];
+    const currentIndex = modes.indexOf(repeatMode);
+    setRepeatMode(modes[(currentIndex + 1) % modes.length]);
   };
 
   // Observe sections to update active nav link
@@ -86,9 +266,25 @@ export default function Home() {
           <span className="text-ours-blue">R</span>avy <span className="text-ours-burgundy">&</span> <span className="text-black">M</span>ami
         </div>
         <nav className="hidden sm:flex items-center gap-6 text-sm">
-          <a className={`transition-colors ${activeId === "story" ? "text-rose-600" : "hover:text-rose-600"}`} href="#story">Hikayemiz</a>
-          <a className={`transition-colors ${activeId === "memories" ? "text-rose-600" : "hover:text-rose-600"}`} href="#memories">Anılar</a>
-          <a className={`transition-colors ${activeId === "daily-note" ? "text-rose-600" : "hover:text-rose-600"}`} href="#daily-note">Bugünün Notu</a>
+          <button 
+            onClick={() => scrollToSection("story")}
+            className={`transition-all duration-200 hover:scale-105 active:scale-95 ${activeId === "story" ? "text-rose-600" : "hover:text-rose-600"}`}
+          >
+            Hikayemiz
+          </button>
+          <button 
+            onClick={() => scrollToSection("memories")}
+            className={`transition-all duration-200 hover:scale-105 active:scale-95 ${activeId === "memories" ? "text-rose-600" : "hover:text-rose-600"}`}
+          >
+            Anılar
+          </button>
+          <button 
+            onClick={() => scrollToSection("daily-note")}
+            className={`transition-all duration-200 hover:scale-105 active:scale-95 ${activeId === "daily-note" ? "text-rose-600" : "hover:text-rose-600"}`}
+          >
+            Bugünün Notu
+          </button>
+          <a className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/game">Oyun 💖</a>
         </nav>
       </header>
 
@@ -108,16 +304,22 @@ export default function Home() {
               </p>
 
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                <a href="#memories" className="inline-flex items-center justify-center rounded-full px-5 py-3 bg-rose-500 text-white shadow-sm shadow-rose-500/30 hover:bg-rose-600 transition-colors">
+                <button 
+                  onClick={() => scrollToSection("memories")}
+                  className="inline-flex items-center justify-center rounded-full px-5 py-3 bg-rose-500 text-white shadow-sm shadow-rose-500/30 hover:bg-rose-600 hover:shadow-lg hover:shadow-rose-500/40 hover:scale-105 active:scale-95 transition-all duration-200"
+                >
                   Anılara Bakalım
-                </a>
-                <button onClick={onTogglePlay} className="inline-flex items-center justify-center rounded-full px-5 py-3 ring-1 ring-black/10 dark:ring-white/10 bg-white/70 backdrop-blur hover:bg-white/90 transition-colors">
+                </button>
+                <button 
+                  onClick={onTogglePlay} 
+                  className="inline-flex items-center justify-center rounded-full px-5 py-3 ring-1 ring-black/10 dark:ring-white/10 bg-white/70 backdrop-blur hover:bg-white/90 hover:scale-105 active:scale-95 hover:shadow-lg transition-all duration-200"
+                >
                   {isPlaying ? "Müziği Durdur" : "Şarkımızı Çal"}
                 </button>
               </div>
 
               <div className="mt-3 text-xs text-black/60 dark:text-white/60">
-                Gökhan Türkmen — Mavi
+                {currentTrack.artist} — {currentTrack.title}
               </div>
             </div>
 
@@ -137,14 +339,13 @@ export default function Home() {
         <section id="memories" className="px-6 sm:px-10 pb-16">
           <div className="mx-auto max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {memoryImages.map((src, i) => (
-              <div className="group">
+              <div key={i} className="group">
                 <button
-                  key={i}
                   onClick={() => {
                     setLightboxIndex(i);
                     setLightboxOpen(true);
                   }}
-                  className="relative overflow-hidden rounded-3xl ring-1 ring-rose-300/50 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] hover:-translate-y-1 transition-all duration-300 w-full"
+                  className="relative overflow-hidden rounded-3xl ring-1 ring-rose-300/50 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 w-full"
                 >
                   <div className="aspect-[4/3] relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -180,7 +381,7 @@ export default function Home() {
               ].map((item, idx) => (
                 <li key={idx} className="ms-4 py-4">
                   <div className="absolute w-2 h-2 rounded-full bg-rose-500 -start-1.5 mt-2 shadow-[0_0_0_4px_rgba(255,143,163,0.25)]" />
-                  <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                  <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
                     <h3 className="font-display text-lg tracking-wide text-white">{item.title}</h3>
                     <p className="text-sm text-white/80 leading-relaxed mt-2">{item.desc}</p>
                   </div>
@@ -192,35 +393,28 @@ export default function Home() {
 
         {/* Daily Note */}
         <section id="daily-note" className="px-6 sm:px-10 pb-24">
-          <div className="mx-auto max-w-3xl rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-8 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] transition-all duration-300">
-            <h2 className="font-display text-2xl mb-4 tracking-tight text-white">Bugünün Notu</h2>
-            <p className="text-white/80 leading-relaxed text-lg" id="daily-note-text">
+          <div className="mx-auto max-w-3xl rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-8 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] hover:scale-[1.01] active:scale-[0.99] transition-all duration-300">
+            <div className="flex items-center gap-3 mb-4">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-rose-500 hover:scale-110 hover:text-rose-400 transition-all duration-300 cursor-pointer">
+                <path d="M12 21s-6.716-4.507-9.192-7.4C.948 11.51 1.2 7.7 4.32 6.34 6.4 5.4 8.3 6.1 9.4 7.2L12 9.8l2.6-2.6c1.1-1.1 3-1.8 5.08-.86 3.12 1.36 3.37 5.17 1.51 7.26C18.716 16.493 12 21 12 21z" fill="currentColor" />
+              </svg>
+              <h2 className="font-display text-2xl tracking-tight text-white">Bugünün Notu</h2>
+            </div>
+            <p className="text-white/80 leading-relaxed text-lg">
               Güne senin sesinle başlamak, günün en güzel kısmı.
             </p>
-            <div className="mt-6">
-              <button
-                className="inline-flex items-center justify-center rounded-full px-5 py-3 ring-1 ring-white/20 bg-white/10 hover:bg-white/20 hover:ring-white/30 transition-all duration-300 text-sm font-medium text-white"
-                onClick={async () => {
-                  const text = document.getElementById("daily-note-text")?.textContent || "";
-                  try {
-                    await navigator.clipboard.writeText(text);
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 1500);
-                  } catch (e) {
-                    console.error("Clipboard failed", e);
-                  }
-                }}
-              >
-                {copied ? "Kopyalandı ✓" : "Kopyala"}
-              </button>
-            </div>
-          </div>
+        </div>
         </section>
       </main>
 
       <footer className="px-6 sm:px-10 pb-10 text-center text-sm text-black/60">
         <p>
-          <a href="#" className="hover:text-rose-600 transition-colors">Yukarı dön</a>
+          <button 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="hover:text-rose-600 hover:scale-105 active:scale-95 transition-all duration-200"
+          >
+            Yukarı dön
+          </button>
           <span className="mx-2">·</span>
           <span>
             <span className="text-ours-blue">Mavi</span> & <span className="text-ours-burgundy">Bordo</span> ile yazıldı.
@@ -232,19 +426,36 @@ export default function Home() {
         ref={audioRef}
         preload="none"
         onError={() => {
-          console.error("Audio element failed to load source /audio/mavi.mp3");
-          alert("Ses dosyası yüklenemedi. /audio/mavi.mp3 yolunu ve formatı kontrol edin.");
+          console.error("Audio element failed to load source", currentTrack.src);
+          alert("Ses dosyası yüklenemedi. Dosya yolunu ve formatı kontrol edin.");
+        }}
+        onEnded={() => {
+          if (repeatMode === 'all') {
+            playNext();
+          } else if (repeatMode === 'none') {
+            playNext();
+          }
         }}
         onCanPlay={() => {
           // Optional: could auto-play after first user gesture via button
         }}
       >
-        <source src="/audio/mavi.mp3" type="audio/mpeg" />
-        {/* Uncomment to add an OGG fallback if you have it */}
-        {/* <source src="/audio/mavi.ogg" type="audio/ogg" /> */}
+        <source src={currentTrack.src} type="audio/mpeg" />
       </audio>
 
-      <MiniPlayer getAudio={() => audioRef.current} />
+      <MiniPlayer 
+        getAudio={() => audioRef.current}
+        currentTrack={currentTrack}
+        onNext={playNext}
+        onPrevious={playPrevious}
+        onVolumeChange={handleVolumeChange}
+        volume={volume}
+        isShuffled={isShuffled}
+        repeatMode={repeatMode}
+        onToggleShuffle={toggleShuffle}
+        onToggleRepeat={toggleRepeat}
+        onTogglePlay={onTogglePlay}
+      />
 
       <Lightbox
         isOpen={lightboxOpen}

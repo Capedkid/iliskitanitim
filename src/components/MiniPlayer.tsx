@@ -4,11 +4,37 @@ import { useEffect, useRef, useState } from "react";
 
 type MiniPlayerProps = {
   getAudio: () => HTMLAudioElement | null;
+  currentTrack?: {
+    title: string;
+    artist: string;
+  };
+  onNext?: () => void;
+  onPrevious?: () => void;
+  onVolumeChange?: (volume: number) => void;
+  volume?: number;
+  isShuffled?: boolean;
+  repeatMode?: 'none' | 'one' | 'all';
+  onToggleShuffle?: () => void;
+  onToggleRepeat?: () => void;
+  onTogglePlay?: () => void; // Hero'daki aynı fonksiyon
 };
 
-export default function MiniPlayer({ getAudio }: MiniPlayerProps) {
+export default function MiniPlayer({ 
+  getAudio, 
+  currentTrack,
+  onNext,
+  onPrevious,
+  onVolumeChange,
+  volume = 0.7,
+  isShuffled = false,
+  repeatMode = 'none',
+  onToggleShuffle,
+  onToggleRepeat,
+  onTogglePlay
+}: MiniPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -36,9 +62,15 @@ export default function MiniPlayer({ getAudio }: MiniPlayerProps) {
   }, [getAudio]);
 
   const toggle = async () => {
-    const audio = getAudio();
-    if (!audio) return;
-    if (audio.paused) await audio.play(); else audio.pause();
+    // Hero'daki aynı fonksiyonu kullan
+    if (onTogglePlay) {
+      onTogglePlay();
+    } else {
+      // Fallback: eski yöntem
+      const audio = getAudio();
+      if (!audio) return;
+      if (audio.paused) await audio.play(); else audio.pause();
+    }
   };
 
   const onSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,14 +82,113 @@ export default function MiniPlayer({ getAudio }: MiniPlayerProps) {
   };
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[min(560px,92vw)] rounded-full bg-white/80 backdrop-blur ring-1 ring-black/10 shadow-lg flex items-center gap-3 px-4 py-2">
-      <button onClick={toggle} className="h-8 w-8 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-colors" aria-label="Play/Pause">
-        {isPlaying ? "❚❚" : "▶"}
-      </button>
-      <div className="flex-1">
-        <input aria-label="Seek" type="range" min={0} max={100} value={progress} onChange={onSeek} className="w-full accent-rose-500" />
+    <div 
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[min(560px,92vw)] rounded-2xl bg-white/90 backdrop-blur ring-1 ring-black/10 shadow-lg transition-all duration-300 ${isExpanded ? 'h-32' : 'h-12'} group`}
+      onMouseEnter={() => {
+        // Sadece masaüstünde otomatik aç
+        if (window.innerWidth >= 768) {
+          setIsExpanded(true);
+        }
+      }}
+      onMouseLeave={() => {
+        // Sadece masaüstünde otomatik kapat
+        if (window.innerWidth >= 768) {
+          setIsExpanded(false);
+        }
+      }}
+    >
+      {/* Compact View */}
+      <div className="flex items-center gap-3 px-4 py-2 h-12">
+        <button onClick={toggle} className="h-8 w-8 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-colors" aria-label="Play/Pause">
+          {isPlaying ? "❚❚" : "▶"}
+        </button>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-medium text-black truncate">
+            {currentTrack?.title || "Mavi"}
+          </div>
+          <div className="text-xs text-black/60 truncate">
+            {currentTrack?.artist || "Gökhan Türkmen"}
+          </div>
+        </div>
+        <button 
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="h-6 w-6 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center md:hidden"
+          aria-label="Expand"
+        >
+          {isExpanded ? "▼" : "▲"}
+        </button>
       </div>
-      <div className="text-xs text-black/70">Mavi</div>
+
+      {/* Expanded View */}
+      {isExpanded && (
+        <div className="px-4 pb-4 space-y-3">
+          {/* Progress Bar */}
+          <div className="flex-1">
+            <input 
+              aria-label="Seek" 
+              type="range" 
+              min={0} 
+              max={100} 
+              value={progress} 
+              onChange={onSeek} 
+              className="w-full accent-rose-500" 
+            />
+          </div>
+
+          {/* Controls Row */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={onToggleShuffle}
+                className={`h-8 w-8 rounded-full flex items-center justify-center transition-colors ${
+                  isShuffled ? 'bg-rose-500 text-white' : 'bg-black/10 hover:bg-black/20'
+                }`}
+                aria-label="Shuffle"
+              >
+                🔀
+              </button>
+              <button 
+                onClick={onPrevious}
+                className="h-8 w-8 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center"
+                aria-label="Previous"
+              >
+                ⏮
+              </button>
+              <button 
+                onClick={onNext}
+                className="h-8 w-8 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center"
+                aria-label="Next"
+              >
+                ⏭
+              </button>
+              <button 
+                onClick={onToggleRepeat}
+                className={`h-8 w-8 rounded-full flex items-center justify-center transition-colors ${
+                  repeatMode !== 'none' ? 'bg-rose-500 text-white' : 'bg-black/10 hover:bg-black/20'
+                }`}
+                aria-label="Repeat"
+              >
+                {repeatMode === 'one' ? '🔁' : '🔂'}
+              </button>
+            </div>
+
+            {/* Volume Control */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-black/60">🔊</span>
+              <input 
+                type="range" 
+                min={0} 
+                max={1} 
+                step={0.1} 
+                value={volume} 
+                onChange={(e) => onVolumeChange?.(parseFloat(e.target.value))}
+                className="w-16 accent-rose-500"
+                aria-label="Volume"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
