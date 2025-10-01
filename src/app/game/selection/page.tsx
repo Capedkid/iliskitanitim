@@ -30,7 +30,7 @@ export default function GameSelection() {
         </div>
 
         {/* Game Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {/* Kalp Toplama Oyunu */}
           <Link 
             href="/game/hearts" 
@@ -60,6 +60,51 @@ export default function GameSelection() {
               Oyna →
             </div>
           </Link>
+
+          {/* Aşk Oku Oyunu */}
+          <Link 
+            href="/game/arrow" 
+            className="group bg-white/70 backdrop-blur rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-center"
+          >
+            <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🏹</div>
+            <h2 className="text-2xl font-display text-rose-600 mb-3">Aşk Oku</h2>
+            <p className="text-gray-600 mb-4">
+              Romantik hedefleri vur ve puan kazan! Okçuluk oyunu ile aşkınızı hedefle.
+            </p>
+            <div className="inline-flex items-center gap-2 text-rose-500 font-medium">
+              Oyna →
+            </div>
+          </Link>
+
+          {/* Aşk Mektubu Yazma Oyunu */}
+          <Link 
+            href="/game/letter" 
+            className="group bg-white/70 backdrop-blur rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-center"
+          >
+            <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">💌</div>
+            <h2 className="text-2xl font-display text-rose-600 mb-3">Aşk Mektubu Yazma</h2>
+            <p className="text-gray-600 mb-4">
+              Romantik cümleleri tamamla! Kelime oyunu ile aşk mektubunuzu yazın.
+            </p>
+            <div className="inline-flex items-center gap-2 text-rose-500 font-medium">
+              Oyna →
+            </div>
+          </Link>
+
+          {/* Birlikte Yürüme Oyunu */}
+          <Link 
+            href="/game/walking" 
+            className="group bg-white/70 backdrop-blur rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-center"
+          >
+            <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🚶‍♂️</div>
+            <h2 className="text-2xl font-display text-rose-600 mb-3">Birlikte Yürüme</h2>
+            <p className="text-gray-600 mb-4">
+              İki karakter birlikte koşuyor! Platform oyunu ile engelleri aşın.
+            </p>
+            <div className="inline-flex items-center gap-2 text-rose-500 font-medium">
+              Oyna →
+            </div>
+          </Link>
         </div>
 
         {/* Coming Soon */}
@@ -67,14 +112,14 @@ export default function GameSelection() {
           <h3 className="text-xl font-display text-rose-600 mb-4">Yakında Gelecek Oyunlar</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
             <div className="bg-white/50 backdrop-blur rounded-2xl p-6 opacity-60">
-              <div className="text-4xl mb-2">🎯</div>
-              <h4 className="font-medium text-rose-600">Aşk Oku</h4>
-              <p className="text-sm text-gray-500">Hedef vurma oyunu</p>
-            </div>
-            <div className="bg-white/50 backdrop-blur rounded-2xl p-6 opacity-60">
               <div className="text-4xl mb-2">🎨</div>
               <h4 className="font-medium text-rose-600">Renk Eşleştirme</h4>
               <p className="text-sm text-gray-500">Renkli puzzle oyunu</p>
+            </div>
+            <div className="bg-white/50 backdrop-blur rounded-2xl p-6 opacity-60">
+              <div className="text-4xl mb-2">🎵</div>
+              <h4 className="font-medium text-rose-600">Müzik Puzzle</h4>
+              <p className="text-sm text-gray-500">Nota eşleştirme oyunu</p>
             </div>
           </div>
         </div>
