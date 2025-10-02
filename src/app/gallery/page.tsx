@@ -28,10 +28,8 @@ interface Photo {
 }
 
 export default function GalleryPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
 
   // Örnek fotoğraflar (gerçek fotoğraflarla değiştirilecek)
   const photos: Photo[] = [
@@ -101,25 +99,9 @@ export default function GalleryPage() {
     }
   ];
 
-  const categories = [
-    { id: 'all', name: 'Tümü', icon: '📸', count: photos.length },
-    { id: 'first-meeting', name: 'İlk Buluşma', icon: '💕', count: photos.filter(p => p.category === 'first-meeting').length },
-    { id: 'special-days', name: 'Özel Günler', icon: '🎉', count: photos.filter(p => p.category === 'special-days').length },
-    { id: 'together', name: 'Birlikte', icon: '👫', count: photos.filter(p => p.category === 'together').length },
-    { id: 'memories', name: 'Anılar', icon: '💭', count: photos.filter(p => p.category === 'memories').length }
-  ];
-
-  // Filtrelenmiş fotoğraflar
-  const filteredPhotos = photos.filter(photo => {
-    const matchesCategory = selectedCategory === 'all' || photo.category === selectedCategory;
-    const matchesSearch = photo.caption.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         photo.location?.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
   // Lightbox için fotoğrafları hazırla
-  const lightboxImages = filteredPhotos.map(photo => photo.src);
-  const lightboxCaptions = filteredPhotos.map(photo => `${photo.caption} - ${photo.date}${photo.location ? ` (${photo.location})` : ''}`);
+  const lightboxImages = photos.map(photo => photo.src);
+  const lightboxCaptions = photos.map(photo => `${photo.caption} - ${photo.date}${photo.location ? ` (${photo.location})` : ''}`);
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
@@ -177,7 +159,7 @@ export default function GalleryPage() {
               Her fotoğraf bir hikaye, her anı bir hazine.
             </p>
             <div className="mt-6 text-sm text-black/60 dark:text-white/60">
-              {filteredPhotos.length} fotoğraf
+              {photos.length} fotoğraf
             </div>
           </div>
           <div className="mt-10">
@@ -187,47 +169,11 @@ export default function GalleryPage() {
 
         <main className="px-6 sm:px-10 pb-10">
           <div className="max-w-6xl mx-auto">
-            {/* Search and Filters - Ana sayfa stili */}
-            <div className="mb-8">
-              {/* Search Bar */}
-              <div className="mb-6">
-                <div className="relative max-w-md mx-auto">
-                  <input
-                    type="text"
-                    placeholder="Fotoğraf ara..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-3 pl-10 rounded-2xl border border-rose-200 bg-white/70 backdrop-blur focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
-                  />
-                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                    🔍
-                  </div>
-                </div>
-              </div>
-
-              {/* Category Filters - Ana sayfa stili */}
-              <div className="flex flex-wrap justify-center gap-3">
-                {categories.map(category => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
-                      selectedCategory === category.id
-                        ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30'
-                        : 'bg-white/70 text-gray-700 hover:bg-rose-100 hover:text-rose-700 hover:shadow-lg'
-                    }`}
-                  >
-                    <span className="mr-2">{category.icon}</span>
-                    {category.name} ({category.count})
-                  </button>
-                ))}
-              </div>
-            </div>
 
             {/* Photo Grid */}
-            {filteredPhotos.length > 0 ? (
+            {photos.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredPhotos.map((photo, index) => (
+                {photos.map((photo, index) => (
                   <div key={photo.id} className="group">
                     <button
                       onClick={() => openLightbox(index)}
@@ -242,37 +188,21 @@ export default function GalleryPage() {
                         />
                         {/* Overlay gradient */}
                         <div className="absolute inset-0 bg-gradient-to-br from-rose-50/20 via-white/5 to-rose-100/20" />
-                        {/* Category badge */}
-                        <div className="absolute top-3 left-3">
-                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-white/90 backdrop-blur text-rose-600">
-                            {categories.find(c => c.id === photo.category)?.icon}
-                            {categories.find(c => c.id === photo.category)?.name}
-                          </span>
-                        </div>
+                        
                         {/* Date badge */}
                         <div className="absolute top-3 right-3">
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-black/40 backdrop-blur text-white">
                             {new Date(photo.date).toLocaleDateString('tr-TR')}
                           </span>
                         </div>
-                        {/* Hover overlay */}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <div className="text-white text-center">
-                              <div className="text-2xl mb-2">👁️</div>
-                              <div className="text-sm font-medium">Görüntüle</div>
-                            </div>
-                          </div>
-                        </div>
+                        {/* Hover overlay (no icon/text) */}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
                       </div>
                     </button>
                     <div className="mt-3">
-                      <h3 className="font-medium text-gray-800 text-sm leading-tight mb-1">
+                      <h3 className="font-medium text-white text-sm leading-tight mb-1">
                         {photo.caption}
                       </h3>
-                      {photo.location && (
-                        <p className="text-xs text-gray-500">📍 {photo.location}</p>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -280,23 +210,14 @@ export default function GalleryPage() {
             ) : (
               <div className="text-center py-16">
                 <div className="text-6xl mb-4">📸</div>
-                <h3 className="text-xl font-display text-rose-600 mb-2">Fotoğraf bulunamadı</h3>
+                <h3 className="text-xl font-display text-rose-600 mb-2">Henüz fotoğraf yok</h3>
                 <p className="text-gray-600">
-                  {searchTerm ? 'Arama kriterlerinize uygun fotoğraf yok.' : 'Bu kategoride henüz fotoğraf yok.'}
+                  Galeriye fotoğraf eklemek için aşağıdaki butona tıklayın.
                 </p>
               </div>
             )}
 
-            {/* Add Photo Button - Ana sayfa stili */}
-            <div className="mt-12 text-center">
-              <button className="inline-flex items-center justify-center rounded-full px-5 py-3 bg-rose-500 text-white shadow-sm shadow-rose-500/30 hover:bg-rose-600 hover:shadow-lg hover:shadow-rose-500/40 hover:scale-105 active:scale-95 transition-all duration-200">
-                <span className="mr-2">📷</span>
-                Fotoğraf Ekle
-              </button>
-              <p className="text-sm text-black/60 dark:text-white/60 mt-3">
-                Gerçek fotoğraflarınızı eklemek için bu butona tıklayın
-              </p>
-            </div>
+            
           </div>
         </main>
 
