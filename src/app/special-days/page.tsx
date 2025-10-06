@@ -459,20 +459,24 @@ export default function SpecialDaysPage() {
           </div>
         </main>
 
-        {/* Footer - Ana sayfa gibi */}
-        <footer className="px-6 sm:px-10 pb-10 text-center text-sm text-black/60">
-          <p>
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="hover:text-rose-600 hover:scale-105 active:scale-95 transition-all duration-200"
-            >
-              Yukarı dön
-            </button>
-            <span className="mx-2">·</span>
-            <span>
-              <span className="text-ours-blue">Mavi</span> & <span className="text-ours-burgundy">Bordo</span> ile yazıldı.
-            </span>
-          </p>
+        <footer className="px-6 sm:px-10 pb-10 text-center text-sm">
+          <div className="mx-auto max-w-5xl">
+            <div className="mt-8">
+              <HeartDivider />
+            </div>
+            <div className="mt-6 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/40 p-6">
+              <p className="text-white/80">“Kalbin kalbime değdiğinde, dünya sessizleşir.”</p>
+              <div className="mt-3 text-white/60">
+                <Link href="/" className="hover:text-rose-300 transition-colors">Ana Sayfa</Link>
+                <span className="mx-2">·</span>
+                <Link href="/gallery" className="hover:text-rose-300 transition-colors">Galeri</Link>
+                <span className="mx-2">·</span>
+                <Link href="/messages" className="hover:text-rose-300 transition-colors">Mesajlar</Link>
+                <span className="mx-2">·</span>
+                <Link href="/special-days" className="hover:text-rose-300 transition-colors">Özel Günler</Link>
+              </div>
+            </div>
+          </div>
         </footer>
       </div>
     </div>

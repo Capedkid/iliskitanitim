@@ -35,67 +35,67 @@ export default function GalleryPage() {
   const photos: Photo[] = [
     {
       id: 1,
-      src: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=800&auto=format&fit=crop",
-      caption: "İlk buluşmamız - Mavi ve bordo ilk kez bir arada",
+      src: "/images/gallery/photo-1.jpg",
+      caption: "Yanına geldim ;)",
       category: 'first-meeting',
-      date: "2024-01-15",
-      location: "Merkez Park"
+      date: "",
+      location: ""
     },
     {
       id: 2,
-      src: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=1200&auto=format&fit=crop",
+      src: "/images/gallery/photo-2.jpg",
       caption: "Birlikte yürürken zaman yavaşlıyor",
       category: 'together',
-      date: "2024-02-20",
-      location: "Sahil Yolu"
+      date: "",
+      location: ""
     },
     {
       id: 3,
-      src: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1200&auto=format&fit=crop",
+      src: "/images/gallery/photo-3.jpg",
       caption: "Özel günümüz - Küçük sürprizler, büyük gülüşler",
       category: 'special-days',
-      date: "2024-03-14",
-      location: "Favori Kafe"
+      date: "",
+      location: ""
     },
     {
       id: 4,
-      src: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop",
-      caption: "Mavi ve bordo aynı karede",
+      src: "/images/gallery/photo-4.jpg",
+      caption: "Sahilden güzel bir gün :)",
       category: 'memories',
-      date: "2024-04-10",
-      location: "Ev"
+      date: "",
+      location: ""
     },
     {
       id: 5,
-      src: "https://images.unsplash.com/photo-1518621012425-65a5b8b8b8b8?q=80&w=800&auto=format&fit=crop",
-      caption: "İlk kahve buluşmamız",
+      src: "/images/gallery/photo-5.jpg",
+      caption: "Seni izlemek çok güzel",
       category: 'first-meeting',
-      date: "2024-01-20",
-      location: "Starbucks"
+      date: "",
+      location: ""
     },
     {
       id: 6,
-      src: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1200&auto=format&fit=crop",
-      caption: "Birlikte kitap okuma anımız",
+      src: "/images/gallery/photo-6.jpg",
+      caption: "Türk kahvesi :)",
       category: 'together',
-      date: "2024-02-25",
-      location: "Kütüphane"
+      date: "",
+      location: ""
     },
     {
       id: 7,
-      src: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=800&auto=format&fit=crop",
+      src: "/images/gallery/photo-7.jpg",
       caption: "Doğum günü sürprizi",
       category: 'special-days',
-      date: "2024-03-20",
-      location: "Restoran"
+      date: "",
+      location: ""
     },
     {
       id: 8,
-      src: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=1200&auto=format&fit=crop",
-      caption: "Gün batımı fotoğrafımız",
+      src: "/images/gallery/photo-8.jpg",
+      caption: "Başbaşa olmak ne güzel... ♥",
       category: 'memories',
-      date: "2024-04-15",
-      location: "Tepeler"
+      date: "",
+      location: ""
     }
   ];
 
@@ -189,12 +189,7 @@ export default function GalleryPage() {
                         {/* Overlay gradient */}
                         <div className="absolute inset-0 bg-gradient-to-br from-rose-50/20 via-white/5 to-rose-100/20" />
                         
-                        {/* Date badge */}
-                        <div className="absolute top-3 right-3">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-black/40 backdrop-blur text-white">
-                            {new Date(photo.date).toLocaleDateString('tr-TR')}
-                          </span>
-                        </div>
+                        
                         {/* Hover overlay (no icon/text) */}
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
                       </div>
@@ -221,20 +216,24 @@ export default function GalleryPage() {
           </div>
         </main>
 
-        {/* Footer - Ana sayfa gibi */}
-        <footer className="px-6 sm:px-10 pb-10 text-center text-sm text-black/60">
-          <p>
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="hover:text-rose-600 hover:scale-105 active:scale-95 transition-all duration-200"
-            >
-              Yukarı dön
-            </button>
-            <span className="mx-2">·</span>
-            <span>
-              <span className="text-ours-blue">Mavi</span> & <span className="text-ours-burgundy">Bordo</span> ile yazıldı.
-            </span>
-          </p>
+        <footer className="px-6 sm:px-10 pb-10 text-center text-sm">
+          <div className="mx-auto max-w-5xl">
+            <div className="mt-8">
+              <HeartDivider />
+            </div>
+            <div className="mt-6 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/40 p-6">
+              <p className="text-white/80">“Kalbin kalbime değdiğinde, dünya sessizleşir.”</p>
+              <div className="mt-3 text-white/60">
+                <Link href="/" className="hover:text-rose-300 transition-colors">Ana Sayfa</Link>
+                <span className="mx-2">·</span>
+                <Link href="/gallery" className="hover:text-rose-300 transition-colors">Galeri</Link>
+                <span className="mx-2">·</span>
+                <Link href="/messages" className="hover:text-rose-300 transition-colors">Mesajlar</Link>
+                <span className="mx-2">·</span>
+                <Link href="/special-days" className="hover:text-rose-300 transition-colors">Özel Günler</Link>
+              </div>
+            </div>
+          </div>
         </footer>
       </div>
 
