@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import Lightbox from "@/components/Lightbox";
 import MiniPlayer from "@/components/MiniPlayer";
 
@@ -21,7 +22,6 @@ function HeartDivider() {
 export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [copied, setCopied] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [isShuffled, setIsShuffled] = useState(false);
@@ -90,7 +90,7 @@ export default function Home() {
           if (maviIndex > 0) {
             // Mavi şarkısını bul ve ilk sıraya taşı
             const maviSong = audioFiles[maviIndex];
-            const otherSongs = audioFiles.filter((_: any, index: number) => index !== maviIndex);
+            const otherSongs = audioFiles.filter((_: unknown, index: number) => index !== maviIndex);
             setPlaylist([maviSong, ...otherSongs]);
           } else {
             setPlaylist(audioFiles);
@@ -416,13 +416,13 @@ export default function Home() {
           <div className="mt-6 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/40 p-6">
             <p className="text-white/80">“Kalbin kalbime değdiğinde, dünya sessizleşir.”</p>
             <div className="mt-3 text-white/60">
-              <a href="/" className="hover:text-rose-300 transition-colors">Ana Sayfa</a>
+              <Link href="/" className="hover:text-rose-300 transition-colors">Ana Sayfa</Link>
               <span className="mx-2">·</span>
-              <a href="/gallery" className="hover:text-rose-300 transition-colors">Galeri</a>
+              <Link href="/gallery" className="hover:text-rose-300 transition-colors">Galeri</Link>
               <span className="mx-2">·</span>
-              <a href="/messages" className="hover:text-rose-300 transition-colors">Mesajlar</a>
+              <Link href="/messages" className="hover:text-rose-300 transition-colors">Mesajlar</Link>
               <span className="mx-2">·</span>
-              <a href="/special-days" className="hover:text-rose-300 transition-colors">Özel Günler</a>
+              <Link href="/special-days" className="hover:text-rose-300 transition-colors">Özel Günler</Link>
             </div>
           </div>
         </div>
@@ -521,10 +521,10 @@ function ParallaxHeroImage() {
     };
 
     recomputeCrop();
-    window.addEventListener('resize', recomputeCrop, { passive: true } as any);
+    window.addEventListener('resize', recomputeCrop, { passive: true });
     return () => {
       mq.removeEventListener('change', handleMQ);
-      window.removeEventListener('resize', recomputeCrop as any);
+      window.removeEventListener('resize', recomputeCrop);
     };
   }, []);
 

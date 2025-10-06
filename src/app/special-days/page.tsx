@@ -30,7 +30,6 @@ interface SpecialDay {
 }
 
 export default function SpecialDaysPage() {
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedType, setSelectedType] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'countdown'>('calendar');
 
@@ -133,14 +132,6 @@ export default function SpecialDaysPage() {
   // Bugünkü günler
   const todayDays = filteredDays.filter(day => day.countdown === 0);
 
-  // Tarih güncelleme
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 1000 * 60 * 60); // Her saat güncelle
-
-    return () => clearInterval(timer);
-  }, []);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('tr-TR', {
@@ -158,14 +149,6 @@ export default function SpecialDaysPage() {
     return `${days} gün kaldı 📆`;
   };
 
-  const getImportanceColor = (importance: string) => {
-    switch (importance) {
-      case 'high': return 'text-red-500 bg-red-50 border-red-200';
-      case 'medium': return 'text-orange-500 bg-orange-50 border-orange-200';
-      case 'low': return 'text-blue-500 bg-blue-50 border-blue-200';
-      default: return 'text-gray-500 bg-gray-50 border-gray-200';
-    }
-  };
 
   return (
     <div className="min-h-screen">

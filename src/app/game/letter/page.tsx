@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 
 interface Word {
@@ -31,13 +31,12 @@ export default function LoveLetterGame() {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [gameComplete, setGameComplete] = useState(false);
-  const [showHeart, setShowHeart] = useState(false);
   const [hearts, setHearts] = useState<HeartAnimation[]>([]);
   const [message, setMessage] = useState("");
   const [gameStarted, setGameStarted] = useState(false);
   
-  const gameAreaRef = useRef<HTMLDivElement>(null);
   const heartIdRef = useRef(0);
+  const gameAreaRef = useRef<HTMLDivElement>(null);
 
   // Romantik cümleler
   const romanticSentences: Sentence[] = [
@@ -147,7 +146,7 @@ export default function LoveLetterGame() {
     
     // Kelime seçeneklerini karıştır
     const shuffledOptions = [...sentence.options].sort(() => Math.random() - 0.5);
-    const words: Word[] = shuffledOptions.map((option, index) => ({
+    const words: Word[] = shuffledOptions.map((option) => ({
       text: option,
       isCorrect: option === sentence.correctAnswer,
       isSelected: false
@@ -264,7 +263,7 @@ export default function LoveLetterGame() {
                   {currentSentence?.template.replace('___', '_____')}
                 </div>
                 <div className="text-sm text-gray-500 italic">
-                  "{currentSentence?.translation}"
+                  &ldquo;{currentSentence?.translation}&rdquo;
                 </div>
               </div>
 
@@ -312,7 +311,7 @@ export default function LoveLetterGame() {
                   Toplam Puan: {score}
                 </p>
                 <p className="text-sm text-rose-500 mb-6">
-                  "Aşk mektubun hazır!" 💌
+                  &ldquo;Aşk mektubun hazır!&rdquo; 💌
                 </p>
                 <button
                   onClick={restartGame}

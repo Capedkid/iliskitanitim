@@ -184,7 +184,7 @@ export default function LoveArrowGame() {
     
     const interval = setInterval(checkCollisions, 16);
     return () => clearInterval(interval);
-  }, [gameActive, targets]);
+  }, [gameActive, targets, romanticMessages]);
 
   // Hedef oluşturma
   useEffect(() => {
@@ -192,7 +192,7 @@ export default function LoveArrowGame() {
     
     const interval = setInterval(createTarget, 2000); // Her 2 saniyede bir hedef
     return () => clearInterval(interval);
-  }, [gameActive]);
+  }, [gameActive, createTarget]);
 
   // Zaman sayacı
   useEffect(() => {
@@ -319,7 +319,7 @@ export default function LoveArrowGame() {
                 Toplam Puan: <span className="font-bold text-rose-600">{score}</span>
               </p>
               <p className="text-sm text-rose-500 mb-6">
-                "Aşk oku ile hedefleri vurdun!" 💖
+                &ldquo;Aşk oku ile hedefleri vurdun!&rdquo; 💖
               </p>
               <button
                 onClick={startGame}

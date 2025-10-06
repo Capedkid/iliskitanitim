@@ -258,7 +258,7 @@ export default function WalkingGame() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
+  }, [jump]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 to-fuchsia-50 p-4">
@@ -392,7 +392,7 @@ export default function WalkingGame() {
                 Mesafe: <span className="font-bold text-rose-600">{Math.floor(gameState.distance / 10)}m</span>
               </p>
               <p className="text-sm text-rose-500 mb-6">
-                "Birlikte yürümek güzeldi!" 💖
+                &ldquo;Birlikte yürümek güzeldi!&rdquo; 💖
               </p>
               <button
                 onClick={startGame}

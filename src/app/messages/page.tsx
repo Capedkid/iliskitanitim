@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 function HeartDivider() {
@@ -29,7 +29,6 @@ interface Message {
 }
 
 export default function MessagesPage() {
-  const [viewMode, setViewMode] = useState<'grid' | 'timeline'>('grid');
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -127,10 +126,6 @@ export default function MessagesPage() {
     console.log('Toggle favorite:', messageId);
   };
 
-  const openMessageModal = (message: Message) => {
-    setSelectedMessage(message);
-    setIsModalOpen(true);
-  };
 
   const closeMessageModal = () => {
     setIsModalOpen(false);

@@ -206,7 +206,7 @@ export default function MemoryGame() {
                 Tüm çiftleri {moves} hamlede buldun!
               </p>
               <p className="text-sm text-rose-500 mb-6">
-                "Seninle her gün bir hikaye" 💖
+                &ldquo;Seninle her gün bir hikaye&rdquo; 💖
               </p>
               <button
                 onClick={initializeGame}
@@ -224,7 +224,7 @@ export default function MemoryGame() {
             <div className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl max-w-sm mx-4 text-center animate-pulse">
               <div className="text-4xl mb-3">💖</div>
               <p className="text-lg font-medium text-rose-600 mb-2">
-                "{showQuote.text}"
+                &ldquo;{showQuote.text}&rdquo;
               </p>
               <p className="text-sm text-gray-500">
                 — {showQuote.author}
