@@ -103,7 +103,7 @@ export default function WalkingGame() {
       }
       return char;
     }));
-  }, [gameState.gameActive]);
+  }, [gameState.gameActive, JUMP_FORCE]);
 
   // Engel oluştur
   const createObstacle = () => {

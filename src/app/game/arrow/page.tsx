@@ -47,13 +47,13 @@ export default function LoveArrowGame() {
     "🔥 Ateşli atış!"
   ], []);
 
-  // Hedef türleri
-  const targetTypes = [
+  // Hedef türleri - useMemo ile optimize et
+  const targetTypes = useMemo(() => [
     { type: 'heart' as const, emoji: '💖', points: 100, size: 60 },
     { type: 'rose' as const, emoji: '🌹', points: 80, size: 50 },
     { type: 'star' as const, emoji: '⭐', points: 60, size: 45 },
     { type: 'diamond' as const, emoji: '💎', points: 120, size: 55 }
-  ];
+  ], []);
 
   const startGame = () => {
     setGameActive(true);
