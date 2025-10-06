@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 
 interface Character {
@@ -93,8 +93,8 @@ export default function WalkingGame() {
     }
   };
 
-  // Zıplama
-  const jump = () => {
+  // Zıplama - useCallback ile optimize et
+  const jump = useCallback(() => {
     if (!gameState.gameActive) return;
     
     setCharacters(prev => prev.map(char => {
@@ -103,7 +103,7 @@ export default function WalkingGame() {
       }
       return char;
     }));
-  };
+  }, [gameState.gameActive]);
 
   // Engel oluştur
   const createObstacle = () => {

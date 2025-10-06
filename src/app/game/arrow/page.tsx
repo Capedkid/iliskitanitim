@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
 
 interface Target {
@@ -35,8 +35,8 @@ export default function LoveArrowGame() {
   const targetIdRef = useRef(0);
   const arrowIdRef = useRef(0);
 
-  // Romantik mesajlar
-  const romanticMessages = [
+  // Romantik mesajlar - useMemo ile optimize et
+  const romanticMessages = useMemo(() => [
     "💖 Kalp vurdun!",
     "🌹 Gül hedefi!",
     "⭐ Yıldız gibi!",
@@ -45,7 +45,7 @@ export default function LoveArrowGame() {
     "💕 Aşk oku!",
     "✨ Büyülü!",
     "🔥 Ateşli atış!"
-  ];
+  ], []);
 
   // Hedef türleri
   const targetTypes = [
@@ -72,8 +72,8 @@ export default function LoveArrowGame() {
     setGameComplete(true);
   };
 
-  // Hedef oluşturma
-  const createTarget = () => {
+  // Hedef oluşturma - useCallback ile optimize et
+  const createTarget = useCallback(() => {
     if (!gameAreaRef.current) return;
     
     const gameArea = gameAreaRef.current;
@@ -90,7 +90,7 @@ export default function LoveArrowGame() {
     };
     
     setTargets(prev => [...prev, newTarget]);
-  };
+  }, [targetTypes]);
 
   // Ok atma
   const shootArrow = (event: React.MouseEvent) => {
