@@ -205,8 +205,7 @@ export default function MessagesPage() {
               <span className="text-rose-600">💌</span>
             </h1>
             <p className="mt-5 text-base sm:text-lg text-black/70 dark:text-white/80 max-w-prose leading-relaxed mx-auto">
-              Romantik notlar ve aşk mektupları. Mavinin huzuru ve bordonun tutkusu 
-              kelimelerde bir araya geliyor. Her mesaj bir hikaye, her kelime bir aşk.
+              Romantik notlar ve aşk mektuplarımız. Her mesaj bir hikaye, her kelime bir aşk.
             </p>
             <div className="mt-6 text-sm text-black/60 dark:text-white/60">
               {filteredMessages.length} mesaj
@@ -218,165 +217,19 @@ export default function MessagesPage() {
         </section>
 
         <main className="px-6 sm:px-10 pb-10">
-          <div className="max-w-6xl mx-auto">
-            {/* View Mode Toggle */}
-            <div className="flex justify-center mb-8">
-              <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-1">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    viewMode === 'grid' 
-                      ? 'bg-rose-500 text-white shadow-lg' 
-                      : 'text-white/60 hover:text-white hover:bg-black/20'
-                  }`}
-                >
-                  📋 Grid
-                </button>
-                <button
-                  onClick={() => setViewMode('timeline')}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    viewMode === 'timeline' 
-                      ? 'bg-rose-500 text-white shadow-lg' 
-                      : 'text-white/60 hover:text-white hover:bg-black/20'
-                  }`}
-                >
-                  📅 Timeline
-                </button>
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-12">
+              <div className="text-8xl mb-6">🚧</div>
+              <h2 className="text-3xl font-display tracking-wide text-white mb-4">Yapım Aşamasında</h2>
+              <p className="text-white/80 text-lg leading-relaxed mb-6">
+                Mesajlar sayfamız henüz tamamen bitmedi.
+                <br />
+                Çok yakında içerikler burada olacak 💌
+              </p>
+              <div className="inline-flex items-center gap-2 text-rose-400 font-medium">
+                Yakında gelecek →
               </div>
             </div>
-
-            {/* Messages Display */}
-            {filteredMessages.length > 0 ? (
-              viewMode === 'grid' ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredMessages.map(message => (
-                    <div key={message.id} className="group">
-                      <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] h-full">
-                        {/* Header */}
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1">
-                            <h3 className="font-display text-lg tracking-wide text-white mb-1">
-                              {message.title}
-                            </h3>
-                            <div className="flex items-center gap-2 text-sm text-white/60">
-                              <span>{new Date(message.date).toLocaleDateString('tr-TR')}</span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => toggleFavorite(message.id)}
-                              className={`text-lg transition-colors ${
-                                message.isFavorite ? 'text-yellow-500' : 'text-white/40 hover:text-yellow-400'
-                              }`}
-                            >
-                              ⭐
-                            </button>
-                            <button
-                              onClick={() => printMessage(message)}
-                              className="text-white/40 hover:text-rose-400 transition-colors"
-                            >
-                              🖨️
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Content */}
-                        <p className="text-white/80 leading-relaxed mb-4 line-clamp-4">
-                          {message.content}
-                        </p>
-
-                        {/* Footer */}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-white/60">
-                              {message.author === 'ravi' ? '👨 Ravi' : '👩 Mami'}
-                            </span>
-                          </div>
-                          <button 
-                            onClick={() => openMessageModal(message)}
-                            className="text-rose-400 hover:text-rose-300 text-sm font-medium transition-colors"
-                          >
-                            Devamını Oku →
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="max-w-4xl mx-auto">
-                  <div className="relative">
-                    {/* Timeline Line */}
-                    <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-rose-200"></div>
-                    
-                    {filteredMessages.map((message, index) => (
-                      <div key={message.id} className="relative flex items-start gap-6 mb-8">
-                        {/* Timeline Dot */}
-                        <div className="relative z-10 flex-shrink-0 w-16 h-16 bg-rose-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
-                          {new Date(message.date).getDate()}
-                        </div>
-                        
-                        {/* Message Card */}
-                        <div className="flex-1 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
-                          <div className="flex items-start justify-between mb-4">
-                            <div>
-                              <h3 className="font-display text-xl tracking-wide text-white mb-2">
-                                {message.title}
-                              </h3>
-                              <div className="flex items-center gap-3 text-sm text-white/60">
-                                <span>{new Date(message.date).toLocaleDateString('tr-TR', { 
-                                  year: 'numeric', 
-                                  month: 'long', 
-                                  day: 'numeric' 
-                                })}</span>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => toggleFavorite(message.id)}
-                                className={`text-lg transition-colors ${
-                                  message.isFavorite ? 'text-yellow-500' : 'text-white/40 hover:text-yellow-400'
-                                }`}
-                              >
-                                ⭐
-                              </button>
-                              <button
-                                onClick={() => printMessage(message)}
-                                className="text-white/40 hover:text-rose-400 transition-colors"
-                              >
-                                🖨️
-                              </button>
-                            </div>
-                          </div>
-                          
-                          <p className="text-white/80 leading-relaxed mb-4">
-                            {message.content}
-                          </p>
-                          
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-white/60">
-                                {message.author === 'ravi' ? '👨 Ravi' : '👩 Mami'}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-            ) : (
-              <div className="text-center py-16">
-                <div className="text-6xl mb-4">💌</div>
-                <h3 className="text-xl font-display text-rose-600 mb-2">Henüz mesaj yok</h3>
-                <p className="text-gray-600">
-                  Mesajlar burada görünecek.
-                </p>
-              </div>
-            )}
-
-            
           </div>
         </main>
 

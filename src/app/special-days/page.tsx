@@ -39,39 +39,19 @@ export default function SpecialDaysPage() {
     {
       id: 1,
       title: "İlk Buluşma",
-      date: "2024-01-15",
+      date: "2025-05-19",
       type: 'anniversary',
-      description: "İlk kez buluştuğumuz gün. Mavi ve bordo ilk kez bir araya geldi.",
+      description: "İlk kez buluştuğumuz gün :)",
       isRecurring: true,
       importance: 'high',
       emoji: "💕"
     },
     {
-      id: 2,
-      title: "İlk Öpücük",
-      date: "2024-01-20",
-      type: 'milestone',
-      description: "İlk öpücüğümüz. Kalplerin ilk kıvılcımı.",
-      isRecurring: true,
-      importance: 'high',
-      emoji: "💋"
-    },
-    {
-      id: 3,
-      title: "Birlikte Yaşamaya Başlama",
-      date: "2024-03-01",
-      type: 'milestone',
-      description: "Aynı çatı altında yaşamaya başladığımız gün.",
-      isRecurring: true,
-      importance: 'high',
-      emoji: "🏠"
-    },
-    {
       id: 4,
-      title: "Ravi'nin Doğum Günü",
-      date: "2024-06-15",
+      title: "Ravy'nin Doğum Günü",
+      date: "2005-09-13",
       type: 'birthday',
-      description: "Mavi karakterin doğum günü. Her yıl kutlanır.",
+      description: "İyi ki doğdun sevgilim :) İyi ki...",
       isRecurring: true,
       importance: 'high',
       emoji: "🎂"
@@ -79,27 +59,17 @@ export default function SpecialDaysPage() {
     {
       id: 5,
       title: "Mami'nin Doğum Günü",
-      date: "2024-09-22",
+      date: "2002-06-22",
       type: 'birthday',
-      description: "Bordo karakterin doğum günü. Her yıl kutlanır.",
+      description: ":)",
       isRecurring: true,
       importance: 'high',
       emoji: "🎂"
     },
     {
-      id: 6,
-      title: "Sevgililer Günü",
-      date: "2024-02-14",
-      type: 'holiday',
-      description: "Aşkımızı kutladığımız özel gün.",
-      isRecurring: true,
-      importance: 'medium',
-      emoji: "💖"
-    },
-    {
       id: 7,
       title: "6 Aylık Yıldönümü",
-      date: "2024-07-15",
+      date: "2025-11-15",
       type: 'anniversary',
       description: "6 aydır birlikte olduğumuz gün.",
       isRecurring: false,
@@ -109,7 +79,7 @@ export default function SpecialDaysPage() {
     {
       id: 8,
       title: "1 Yıllık Yıldönümü",
-      date: "2025-01-15",
+      date: "2026-05-15",
       type: 'anniversary',
       description: "1 yıldır birlikte olduğumuz gün.",
       isRecurring: false,
@@ -122,8 +92,6 @@ export default function SpecialDaysPage() {
     { id: 'all', name: 'Tümü', icon: '📅', count: specialDays.length },
     { id: 'anniversary', name: 'Yıldönümü', icon: '💕', count: specialDays.filter(d => d.type === 'anniversary').length },
     { id: 'birthday', name: 'Doğum Günü', icon: '🎂', count: specialDays.filter(d => d.type === 'birthday').length },
-    { id: 'holiday', name: 'Özel Gün', icon: '🎉', count: specialDays.filter(d => d.type === 'holiday').length },
-    { id: 'milestone', name: 'Kilometre Taşı', icon: '🏆', count: specialDays.filter(d => d.type === 'milestone').length }
   ];
 
   // Countdown hesaplama

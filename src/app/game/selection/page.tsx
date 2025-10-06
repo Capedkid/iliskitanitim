@@ -52,8 +52,7 @@ export default function GameSelection() {
               <span className="text-rose-600">💖</span>
             </h1>
             <p className="mt-5 text-base sm:text-lg text-black/70 dark:text-white/80 max-w-prose leading-relaxed mx-auto">
-              Romantik oyunlarımızla eğlenin! Mavinin huzuru ve bordonun tutkusu
-              oyunlarda bir araya geliyor. Her oyun bir macera, her an bir eğlence.
+              Romantik oyunlarımız :)
             </p>
             <div className="mt-6 text-sm text-black/60 dark:text-white/60">
               5 oyun mevcut
@@ -65,118 +64,40 @@ export default function GameSelection() {
         </section>
 
         <main className="px-6 sm:px-10 pb-10">
-          <div className="max-w-6xl mx-auto">
-            {/* Game Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Kalp Toplama Oyunu */}
-              <Link 
-                href="/game/hearts" 
-                className="group rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-8 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] text-center"
-              >
-                <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">💖</div>
-                <h2 className="text-2xl font-display tracking-wide text-white mb-3">Kalp Toplama</h2>
-                <p className="text-white/80 mb-4">
-                  Düşen kalpleri yakala ve puan kazan! Mavi ve bordo kalplerle romantik mesajlar keşfet.
-                </p>
-                <div className="inline-flex items-center gap-2 text-rose-400 font-medium">
-                  Oyna →
-                </div>
-              </Link>
-
-              {/* Memory Oyunu */}
-              <Link 
-                href="/game/memory" 
-                className="group rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-8 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] text-center"
-              >
-                <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🧠</div>
-                <h2 className="text-2xl font-display tracking-wide text-white mb-3">Mavi & Bordo Eşleştirme</h2>
-                <p className="text-white/80 mb-4">
-                  Çiftleri bul ve romantik mesajları keşfet! Hafıza oyunu ile aşkınızı test edin.
-                </p>
-                <div className="inline-flex items-center gap-2 text-rose-400 font-medium">
-                  Oyna →
-                </div>
-              </Link>
-
-              {/* Aşk Oku Oyunu */}
-              <Link 
-                href="/game/arrow" 
-                className="group rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-8 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] text-center"
-              >
-                <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🏹</div>
-                <h2 className="text-2xl font-display tracking-wide text-white mb-3">Aşk Oku</h2>
-                <p className="text-white/80 mb-4">
-                  Romantik hedefleri vur ve puan kazan! Okçuluk oyunu ile aşkınızı hedefle.
-                </p>
-                <div className="inline-flex items-center gap-2 text-rose-400 font-medium">
-                  Oyna →
-                </div>
-              </Link>
-
-              {/* Aşk Mektubu Yazma Oyunu */}
-              <Link 
-                href="/game/letter" 
-                className="group rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-8 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] text-center"
-              >
-                <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">💌</div>
-                <h2 className="text-2xl font-display tracking-wide text-white mb-3">Aşk Mektubu Yazma</h2>
-                <p className="text-white/80 mb-4">
-                  Romantik cümleleri tamamla! Kelime oyunu ile aşk mektubunuzu yazın.
-                </p>
-                <div className="inline-flex items-center gap-2 text-rose-400 font-medium">
-                  Oyna →
-                </div>
-              </Link>
-
-              {/* Birlikte Yürüme Oyunu */}
-              <Link 
-                href="/game/walking" 
-                className="group rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-8 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] text-center"
-              >
-                <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🚶‍♂️</div>
-                <h2 className="text-2xl font-display tracking-wide text-white mb-3">Birlikte Yürüme</h2>
-                <p className="text-white/80 mb-4">
-                  İki karakter birlikte koşuyor! Platform oyunu ile engelleri aşın.
-                </p>
-                <div className="inline-flex items-center gap-2 text-rose-400 font-medium">
-                  Oyna →
-                </div>
-              </Link>
-            </div>
-
-            {/* Coming Soon */}
-            <div className="mt-12 text-center">
-              <h3 className="text-xl font-display tracking-wide text-white mb-4">Yakında Gelecek Oyunlar</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-                <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/30 p-6 opacity-60">
-                  <div className="text-4xl mb-2">🎨</div>
-                  <h4 className="font-display text-lg tracking-wide text-white">Renk Eşleştirme</h4>
-                  <p className="text-sm text-white/60">Renkli puzzle oyunu</p>
-                </div>
-                <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/30 p-6 opacity-60">
-                  <div className="text-4xl mb-2">🎵</div>
-                  <h4 className="font-display text-lg tracking-wide text-white">Müzik Puzzle</h4>
-                  <p className="text-sm text-white/60">Nota eşleştirme oyunu</p>
-                </div>
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-12">
+              <div className="text-8xl mb-6">🚧</div>
+              <h2 className="text-3xl font-display tracking-wide text-white mb-4">Yapım Aşamasında</h2>
+              <p className="text-white/80 text-lg leading-relaxed mb-6">
+                Romantik oyunlarımız henüz tamamen bitmedi 
+                <br />
+                Bitince oynayacağız bitanem :) 💖
+              </p>
+              <div className="inline-flex items-center gap-2 text-rose-400 font-medium">
+                Yakında gelecek →
               </div>
             </div>
           </div>
         </main>
 
-        {/* Footer - Ana sayfa gibi */}
-        <footer className="px-6 sm:px-10 pb-10 text-center text-sm text-black/60">
-          <p>
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="hover:text-rose-600 hover:scale-105 active:scale-95 transition-all duration-200"
-            >
-              Yukarı dön
-            </button>
-            <span className="mx-2">·</span>
-            <span>
-              <span className="text-ours-blue">Mavi</span> & <span className="text-ours-burgundy">Bordo</span> ile yazıldı.
-            </span>
-          </p>
+        <footer className="px-6 sm:px-10 pb-10 text-center text-sm">
+          <div className="mx-auto max-w-5xl">
+            <div className="mt-8">
+              <HeartDivider />
+            </div>
+            <div className="mt-6 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/40 p-6">
+              <p className="text-white/80">"Kalbin kalbime değdiğinde, dünya sessizleşir."</p>
+              <div className="mt-3 text-white/60">
+                <Link href="/" className="hover:text-rose-300 transition-colors">Ana Sayfa</Link>
+                <span className="mx-2">·</span>
+                <Link href="/gallery" className="hover:text-rose-300 transition-colors">Galeri</Link>
+                <span className="mx-2">·</span>
+                <Link href="/messages" className="hover:text-rose-300 transition-colors">Mesajlar</Link>
+                <span className="mx-2">·</span>
+                <Link href="/special-days" className="hover:text-rose-300 transition-colors">Özel Günler</Link>
+              </div>
+            </div>
+          </div>
         </footer>
       </div>
     </div>
