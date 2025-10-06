@@ -29,11 +29,9 @@ interface Message {
 }
 
 export default function MessagesPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedMood, setSelectedMood] = useState<string>('all');
-  const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<'grid' | 'timeline'>('grid');
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Örnek mesajlar (gerçek mesajlarla değiştirilecek)
   const messages: Message[] = [
@@ -119,36 +117,24 @@ export default function MessagesPage() {
     }
   ];
 
-  const categories = [
-    { id: 'all', name: 'Tümü', icon: '💌', count: messages.length },
-    { id: 'daily', name: 'Günlük', icon: '📅', count: messages.filter(m => m.category === 'daily').length },
-    { id: 'weekly', name: 'Haftalık', icon: '📊', count: messages.filter(m => m.category === 'weekly').length },
-    { id: 'special', name: 'Özel Günler', icon: '🎉', count: messages.filter(m => m.category === 'special').length },
-    { id: 'love-notes', name: 'Aşk Mektupları', icon: '💕', count: messages.filter(m => m.category === 'love-notes').length }
-  ];
+  
 
-  const moods = [
-    { id: 'all', name: 'Tümü', emoji: '😊' },
-    { id: 'happy', name: 'Mutlu', emoji: '😊' },
-    { id: 'romantic', name: 'Romantik', emoji: '💕' },
-    { id: 'sweet', emoji: '🍯', name: 'Tatlı' },
-    { id: 'dreamy', name: 'Hayalperest', emoji: '🌙' }
-  ];
-
-  // Filtrelenmiş mesajlar
-  const filteredMessages = messages.filter(message => {
-    const matchesCategory = selectedCategory === 'all' || message.category === selectedCategory;
-    const matchesMood = selectedMood === 'all' || message.mood === selectedMood;
-    const matchesSearch = message.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         message.content.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFavorites = !showFavoritesOnly || message.isFavorite;
-    
-    return matchesCategory && matchesMood && matchesSearch && matchesFavorites;
-  });
+  // Tüm mesajları göster
+  const filteredMessages = messages;
 
   const toggleFavorite = (messageId: number) => {
     // Bu fonksiyon gerçek uygulamada state'i güncelleyecek
     console.log('Toggle favorite:', messageId);
+  };
+
+  const openMessageModal = (message: Message) => {
+    setSelectedMessage(message);
+    setIsModalOpen(true);
+  };
+
+  const closeMessageModal = () => {
+    setIsModalOpen(false);
+    setSelectedMessage(null);
   };
 
   const printMessage = (message: Message) => {
@@ -233,98 +219,28 @@ export default function MessagesPage() {
 
         <main className="px-6 sm:px-10 pb-10">
           <div className="max-w-6xl mx-auto">
-            {/* Search and Filters */}
-            <div className="mb-8">
-              {/* Search Bar */}
-              <div className="mb-6">
-                <div className="relative max-w-md mx-auto">
-                  <input
-                    type="text"
-                    placeholder="Mesaj ara..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-3 pl-10 rounded-2xl border border-rose-200 bg-white/70 backdrop-blur focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  />
-                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                    🔍
-                  </div>
-                </div>
-              </div>
-
-              {/* View Mode Toggle */}
-              <div className="flex justify-center mb-6">
-                <div className="bg-white/70 backdrop-blur rounded-2xl p-1">
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                      viewMode === 'grid' 
-                        ? 'bg-rose-500 text-white shadow-lg' 
-                        : 'text-gray-600 hover:text-rose-600'
-                    }`}
-                  >
-                    📋 Grid
-                  </button>
-                  <button
-                    onClick={() => setViewMode('timeline')}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                      viewMode === 'timeline' 
-                        ? 'bg-rose-500 text-white shadow-lg' 
-                        : 'text-gray-600 hover:text-rose-600'
-                    }`}
-                  >
-                    📅 Timeline
-                  </button>
-                </div>
-              </div>
-
-              {/* Category Filters */}
-              <div className="flex flex-wrap justify-center gap-3 mb-4">
-                {categories.map(category => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                      selectedCategory === category.id
-                        ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30'
-                        : 'bg-white/70 text-gray-700 hover:bg-rose-100 hover:text-rose-700'
-                    }`}
-                  >
-                    <span className="mr-2">{category.icon}</span>
-                    {category.name} ({category.count})
-                  </button>
-                ))}
-              </div>
-
-              {/* Mood Filters */}
-              <div className="flex flex-wrap justify-center gap-3 mb-4">
-                {moods.map(mood => (
-                  <button
-                    key={mood.id}
-                    onClick={() => setSelectedMood(mood.id)}
-                    className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                      selectedMood === mood.id
-                        ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30'
-                        : 'bg-white/70 text-gray-700 hover:bg-rose-100 hover:text-rose-700'
-                    }`}
-                  >
-                    <span className="mr-1">{mood.emoji}</span>
-                    {mood.name}
-                  </button>
-                ))}
-              </div>
-
-              {/* Favorites Toggle */}
-              <div className="flex justify-center">
+            {/* View Mode Toggle */}
+            <div className="flex justify-center mb-8">
+              <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-1">
                 <button
-                  onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                    showFavoritesOnly
-                      ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30'
-                      : 'bg-white/70 text-gray-700 hover:bg-rose-100 hover:text-rose-700'
+                  onClick={() => setViewMode('grid')}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    viewMode === 'grid' 
+                      ? 'bg-rose-500 text-white shadow-lg' 
+                      : 'text-white/60 hover:text-white hover:bg-black/20'
                   }`}
                 >
-                  <span className="mr-2">⭐</span>
-                  Sadece Favoriler
+                  📋 Grid
+                </button>
+                <button
+                  onClick={() => setViewMode('timeline')}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    viewMode === 'timeline' 
+                      ? 'bg-rose-500 text-white shadow-lg' 
+                      : 'text-white/60 hover:text-white hover:bg-black/20'
+                  }`}
+                >
+                  📅 Timeline
                 </button>
               </div>
             </div>
@@ -335,17 +251,14 @@ export default function MessagesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredMessages.map(message => (
                     <div key={message.id} className="group">
-                      <div className="bg-white/70 backdrop-blur rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                      <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] h-full">
                         {/* Header */}
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex-1">
-                            <h3 className="font-display text-lg text-rose-600 mb-1">
+                            <h3 className="font-display text-lg tracking-wide text-white mb-1">
                               {message.title}
                             </h3>
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
-                              <span>{categories.find(c => c.id === message.category)?.icon}</span>
-                              <span>{categories.find(c => c.id === message.category)?.name}</span>
-                              <span>•</span>
+                            <div className="flex items-center gap-2 text-sm text-white/60">
                               <span>{new Date(message.date).toLocaleDateString('tr-TR')}</span>
                             </div>
                           </div>
@@ -353,14 +266,14 @@ export default function MessagesPage() {
                             <button
                               onClick={() => toggleFavorite(message.id)}
                               className={`text-lg transition-colors ${
-                                message.isFavorite ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'
+                                message.isFavorite ? 'text-yellow-500' : 'text-white/40 hover:text-yellow-400'
                               }`}
                             >
                               ⭐
                             </button>
                             <button
                               onClick={() => printMessage(message)}
-                              className="text-gray-400 hover:text-rose-500 transition-colors"
+                              className="text-white/40 hover:text-rose-400 transition-colors"
                             >
                               🖨️
                             </button>
@@ -368,19 +281,21 @@ export default function MessagesPage() {
                         </div>
 
                         {/* Content */}
-                        <p className="text-gray-700 leading-relaxed mb-4 line-clamp-4">
+                        <p className="text-white/80 leading-relaxed mb-4 line-clamp-4">
                           {message.content}
                         </p>
 
                         {/* Footer */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className="text-lg">{moods.find(m => m.id === message.mood)?.emoji}</span>
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-white/60">
                               {message.author === 'ravi' ? '👨 Ravi' : '👩 Mami'}
                             </span>
                           </div>
-                          <button className="text-rose-500 hover:text-rose-600 text-sm font-medium transition-colors">
+                          <button 
+                            onClick={() => openMessageModal(message)}
+                            className="text-rose-400 hover:text-rose-300 text-sm font-medium transition-colors"
+                          >
                             Devamını Oku →
                           </button>
                         </div>
@@ -402,16 +317,13 @@ export default function MessagesPage() {
                         </div>
                         
                         {/* Message Card */}
-                        <div className="flex-1 bg-white/70 backdrop-blur rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <div className="flex-1 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
                           <div className="flex items-start justify-between mb-4">
                             <div>
-                              <h3 className="font-display text-xl text-rose-600 mb-2">
+                              <h3 className="font-display text-xl tracking-wide text-white mb-2">
                                 {message.title}
                               </h3>
-                              <div className="flex items-center gap-3 text-sm text-gray-500">
-                                <span>{categories.find(c => c.id === message.category)?.icon}</span>
-                                <span>{categories.find(c => c.id === message.category)?.name}</span>
-                                <span>•</span>
+                              <div className="flex items-center gap-3 text-sm text-white/60">
                                 <span>{new Date(message.date).toLocaleDateString('tr-TR', { 
                                   year: 'numeric', 
                                   month: 'long', 
@@ -423,28 +335,27 @@ export default function MessagesPage() {
                               <button
                                 onClick={() => toggleFavorite(message.id)}
                                 className={`text-lg transition-colors ${
-                                  message.isFavorite ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'
+                                  message.isFavorite ? 'text-yellow-500' : 'text-white/40 hover:text-yellow-400'
                                 }`}
                               >
                                 ⭐
                               </button>
                               <button
                                 onClick={() => printMessage(message)}
-                                className="text-gray-400 hover:text-rose-500 transition-colors"
+                                className="text-white/40 hover:text-rose-400 transition-colors"
                               >
                                 🖨️
                               </button>
                             </div>
                           </div>
                           
-                          <p className="text-gray-700 leading-relaxed mb-4">
+                          <p className="text-white/80 leading-relaxed mb-4">
                             {message.content}
                           </p>
                           
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <span className="text-lg">{moods.find(m => m.id === message.mood)?.emoji}</span>
-                              <span className="text-sm text-gray-500">
+                              <span className="text-sm text-white/60">
                                 {message.author === 'ravi' ? '👨 Ravi' : '👩 Mami'}
                               </span>
                             </div>
@@ -458,23 +369,14 @@ export default function MessagesPage() {
             ) : (
               <div className="text-center py-16">
                 <div className="text-6xl mb-4">💌</div>
-                <h3 className="text-xl font-display text-rose-600 mb-2">Mesaj bulunamadı</h3>
+                <h3 className="text-xl font-display text-rose-600 mb-2">Henüz mesaj yok</h3>
                 <p className="text-gray-600">
-                  {searchTerm ? 'Arama kriterlerinize uygun mesaj yok.' : 'Bu kategoride henüz mesaj yok.'}
+                  Mesajlar burada görünecek.
                 </p>
               </div>
             )}
 
-            {/* Add Message Button - Ana sayfa stili */}
-            <div className="mt-12 text-center">
-              <button className="inline-flex items-center justify-center rounded-full px-5 py-3 bg-rose-500 text-white shadow-sm shadow-rose-500/30 hover:bg-rose-600 hover:shadow-lg hover:shadow-rose-500/40 hover:scale-105 active:scale-95 transition-all duration-200">
-                <span className="mr-2">✍️</span>
-                Yeni Mesaj Ekle
-              </button>
-              <p className="text-sm text-black/60 dark:text-white/60 mt-3">
-                Yeni romantik mesajlarınızı eklemek için bu butona tıklayın
-              </p>
-            </div>
+            
           </div>
         </main>
 
@@ -494,6 +396,84 @@ export default function MessagesPage() {
           </p>
         </footer>
       </div>
+
+      {/* Message Modal */}
+      {isModalOpen && selectedMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={closeMessageModal}
+          />
+          
+          {/* Modal Content */}
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="rounded-3xl bg-black/30 backdrop-blur ring-1 ring-rose-300/50 p-8 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+              {/* Header */}
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex-1">
+                  <h2 className="font-display text-2xl tracking-wide text-white mb-2">
+                    {selectedMessage.title}
+                  </h2>
+                  <div className="flex items-center gap-4 text-sm text-white/60">
+                    <span>{new Date(selectedMessage.date).toLocaleDateString('tr-TR', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}</span>
+                    <span>•</span>
+                    <span>{selectedMessage.author === 'ravi' ? '👨 Ravi' : '👩 Mami'}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => toggleFavorite(selectedMessage.id)}
+                    className={`text-xl transition-colors ${
+                      selectedMessage.isFavorite ? 'text-yellow-500' : 'text-white/40 hover:text-yellow-400'
+                    }`}
+                  >
+                    ⭐
+                  </button>
+                  <button
+                    onClick={() => printMessage(selectedMessage)}
+                    className="text-white/40 hover:text-rose-400 transition-colors text-lg"
+                  >
+                    🖨️
+                  </button>
+                  <button
+                    onClick={closeMessageModal}
+                    className="text-white/40 hover:text-white transition-colors text-2xl"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="prose prose-invert max-w-none">
+                <p className="text-white/90 leading-relaxed text-lg">
+                  {selectedMessage.content}
+                </p>
+              </div>
+
+              {/* Footer */}
+              <div className="mt-8 pt-6 border-t border-white/10">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-white/50">
+                    Ravy & Mami - Aşk Mektupları
+                  </div>
+                  <button
+                    onClick={closeMessageModal}
+                    className="px-6 py-2 bg-rose-500/20 text-rose-300 rounded-full hover:bg-rose-500/30 transition-colors"
+                  >
+                    Kapat
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

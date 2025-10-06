@@ -251,16 +251,16 @@ export default function SpecialDaysPage() {
             {/* Today's Special Days */}
             {todayDays.length > 0 && (
               <div className="mb-8">
-                <div className="bg-gradient-to-r from-rose-500 to-pink-500 rounded-2xl p-6 text-white shadow-lg">
-                  <h2 className="text-2xl font-display mb-4">🎉 Bugün Özel Günler!</h2>
+                <div className="rounded-3xl bg-black/30 backdrop-blur ring-1 ring-rose-300/50 p-6 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                  <h2 className="text-2xl font-display tracking-wide text-white mb-4">🎉 Bugün Özel Günler!</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {todayDays.map(day => (
-                      <div key={day.id} className="bg-white/20 backdrop-blur rounded-xl p-4">
+                      <div key={day.id} className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/30 p-4 transition-all duration-300 hover:scale-[1.02]">
                         <div className="flex items-center gap-3 mb-2">
                           <span className="text-2xl">{day.emoji}</span>
-                          <h3 className="font-semibold text-lg">{day.title}</h3>
+                          <h3 className="font-display text-lg tracking-wide text-white">{day.title}</h3>
                         </div>
-                        <p className="text-white/90 text-sm">{day.description}</p>
+                        <p className="text-white/80 text-sm">{day.description}</p>
                       </div>
                     ))}
                   </div>
@@ -271,20 +271,20 @@ export default function SpecialDaysPage() {
             {/* Upcoming Days */}
             {upcomingDays.length > 0 && (
               <div className="mb-8">
-                <h2 className="text-2xl font-display text-rose-600 mb-4">⏰ Yaklaşan Günler (30 gün)</h2>
+                <h2 className="text-2xl font-display tracking-wide text-white mb-4">⏰ Yaklaşan Günler (30 gün)</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {upcomingDays.slice(0, 6).map(day => (
-                    <div key={day.id} className="bg-white/70 backdrop-blur rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div key={day.id} className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-4 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
                       <div className="flex items-center gap-3 mb-2">
                         <span className="text-2xl">{day.emoji}</span>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-rose-600">{day.title}</h3>
-                          <p className="text-sm text-gray-500">{formatDate(day.date)}</p>
+                          <h3 className="font-display text-lg tracking-wide text-white">{day.title}</h3>
+                          <p className="text-sm text-white/60">{formatDate(day.date)}</p>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-700 mb-2">{day.description}</p>
+                      <p className="text-sm text-white/80 mb-2">{day.description}</p>
                       <div className="text-center">
-                        <span className="inline-block px-3 py-1 bg-rose-100 text-rose-600 rounded-full text-sm font-medium">
+                        <span className="inline-block px-3 py-1 bg-rose-500/20 text-rose-300 rounded-full text-sm font-medium">
                           {getCountdownText(day.countdown!)}
                         </span>
                       </div>
@@ -296,13 +296,13 @@ export default function SpecialDaysPage() {
 
             {/* View Mode Toggle */}
             <div className="flex justify-center mb-6">
-              <div className="bg-white/70 backdrop-blur rounded-2xl p-1">
+              <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-1">
                 <button
                   onClick={() => setViewMode('calendar')}
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                     viewMode === 'calendar' 
                       ? 'bg-rose-500 text-white shadow-lg' 
-                      : 'text-gray-600 hover:text-rose-600'
+                      : 'text-white/60 hover:text-white hover:bg-black/20'
                   }`}
                 >
                   📅 Takvim
@@ -312,7 +312,7 @@ export default function SpecialDaysPage() {
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                     viewMode === 'list' 
                       ? 'bg-rose-500 text-white shadow-lg' 
-                      : 'text-gray-600 hover:text-rose-600'
+                      : 'text-white/60 hover:text-white hover:bg-black/20'
                   }`}
                 >
                   📋 Liste
@@ -322,7 +322,7 @@ export default function SpecialDaysPage() {
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                     viewMode === 'countdown' 
                       ? 'bg-rose-500 text-white shadow-lg' 
-                      : 'text-gray-600 hover:text-rose-600'
+                      : 'text-white/60 hover:text-white hover:bg-black/20'
                   }`}
                 >
                   ⏰ Countdown
@@ -336,10 +336,10 @@ export default function SpecialDaysPage() {
                 <button
                   key={type.id}
                   onClick={() => setSelectedType(type.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
                     selectedType === type.id
                       ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30'
-                      : 'bg-white/70 text-gray-700 hover:bg-rose-100 hover:text-rose-700'
+                      : 'rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 text-white/80 hover:bg-black/30 hover:text-white hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]'
                   }`}
                 >
                   <span className="mr-2">{type.icon}</span>
@@ -354,37 +354,32 @@ export default function SpecialDaysPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredDays.map(day => (
                     <div key={day.id} className="group">
-                      <div className="bg-white/70 backdrop-blur rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
+                      <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] h-full">
                         {/* Header */}
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <span className="text-3xl">{day.emoji}</span>
-                            <div>
-                              <h3 className="font-display text-lg text-rose-600 mb-1">
-                                {day.title}
-                              </h3>
-                              <div className="flex items-center gap-2 text-sm text-gray-500">
-                                <span>{types.find(t => t.id === day.type)?.icon}</span>
-                                <span>{types.find(t => t.id === day.type)?.name}</span>
-                              </div>
+                        <div className="flex items-center gap-3 mb-4">
+                          <span className="text-3xl">{day.emoji}</span>
+                          <div>
+                            <h3 className="font-display text-lg tracking-wide text-white mb-1">
+                              {day.title}
+                            </h3>
+                            <div className="flex items-center gap-2 text-sm text-white/60">
+                              <span>{types.find(t => t.id === day.type)?.icon}</span>
+                              <span>{types.find(t => t.id === day.type)?.name}</span>
                             </div>
                           </div>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getImportanceColor(day.importance)}`}>
-                            {day.importance === 'high' ? 'Yüksek' : day.importance === 'medium' ? 'Orta' : 'Düşük'}
-                          </span>
                         </div>
 
                         {/* Content */}
-                        <p className="text-gray-700 leading-relaxed mb-4">
+                        <p className="text-white/80 leading-relaxed mb-4">
                           {day.description}
                         </p>
 
                         {/* Footer */}
                         <div className="flex items-center justify-between">
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-white/60">
                             📅 {formatDate(day.date)}
                           </div>
-                          <div className="text-sm font-medium text-rose-600">
+                          <div className="text-sm font-medium text-rose-400">
                             {getCountdownText(day.countdown!)}
                           </div>
                         </div>
@@ -396,27 +391,24 @@ export default function SpecialDaysPage() {
                 <div className="max-w-4xl mx-auto">
                   <div className="space-y-4">
                     {filteredDays.map(day => (
-                      <div key={day.id} className="bg-white/70 backdrop-blur rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                      <div key={day.id} className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
                         <div className="flex items-center gap-4">
                           <span className="text-3xl">{day.emoji}</span>
                           <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <h3 className="font-display text-xl text-rose-600">
+                            <div className="mb-2">
+                              <h3 className="font-display text-xl tracking-wide text-white">
                                 {day.title}
                               </h3>
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getImportanceColor(day.importance)}`}>
-                                {day.importance === 'high' ? 'Yüksek' : day.importance === 'medium' ? 'Orta' : 'Düşük'}
-                              </span>
                             </div>
-                            <p className="text-gray-700 mb-2">{day.description}</p>
-                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <p className="text-white/80 mb-2">{day.description}</p>
+                            <div className="flex items-center gap-4 text-sm text-white/60">
                               <span>{types.find(t => t.id === day.type)?.icon} {types.find(t => t.id === day.type)?.name}</span>
                               <span>📅 {formatDate(day.date)}</span>
                               <span>{day.isRecurring ? '🔄 Tekrarlanan' : '📌 Tek seferlik'}</span>
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="text-lg font-bold text-rose-600">
+                            <div className="text-lg font-bold text-rose-400">
                               {getCountdownText(day.countdown!)}
                             </div>
                           </div>
@@ -429,21 +421,21 @@ export default function SpecialDaysPage() {
                 <div className="max-w-4xl mx-auto">
                   <div className="space-y-4">
                     {filteredDays.map(day => (
-                      <div key={day.id} className="bg-white/70 backdrop-blur rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                      <div key={day.id} className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
                         <div className="flex items-center gap-4">
                           <div className="text-center">
-                            <div className="text-4xl font-bold text-rose-600 mb-1">
+                            <div className="text-4xl font-bold text-rose-400 mb-1">
                               {day.countdown}
                             </div>
-                            <div className="text-xs text-gray-500">gün</div>
+                            <div className="text-xs text-white/60">gün</div>
                           </div>
                           <span className="text-3xl">{day.emoji}</span>
                           <div className="flex-1">
-                            <h3 className="font-display text-xl text-rose-600 mb-1">
+                            <h3 className="font-display text-xl tracking-wide text-white mb-1">
                               {day.title}
                             </h3>
-                            <p className="text-gray-700 mb-2">{day.description}</p>
-                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <p className="text-white/80 mb-2">{day.description}</p>
+                            <div className="flex items-center gap-4 text-sm text-white/60">
                               <span>📅 {formatDate(day.date)}</span>
                               <span>{types.find(t => t.id === day.type)?.icon} {types.find(t => t.id === day.type)?.name}</span>
                             </div>
@@ -464,16 +456,6 @@ export default function SpecialDaysPage() {
               </div>
             )}
 
-            {/* Add Special Day Button - Ana sayfa stili */}
-            <div className="mt-12 text-center">
-              <button className="inline-flex items-center justify-center rounded-full px-5 py-3 bg-rose-500 text-white shadow-sm shadow-rose-500/30 hover:bg-rose-600 hover:shadow-lg hover:shadow-rose-500/40 hover:scale-105 active:scale-95 transition-all duration-200">
-                <span className="mr-2">➕</span>
-                Özel Gün Ekle
-              </button>
-              <p className="text-sm text-black/60 dark:text-white/60 mt-3">
-                Yeni yıldönümü veya özel gün eklemek için bu butona tıklayın
-              </p>
-            </div>
           </div>
         </main>
 
