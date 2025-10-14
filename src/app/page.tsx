@@ -113,9 +113,9 @@ export default function Home() {
   }, []);
 
   const memoryImages = [
-    "/images/memories/ani-1.jpg",
-    "/images/memories/ani-2.jpg",
-    "/images/memories/ani-3.jpg",
+    "https://source.unsplash.com/1200x900/?couple,romance&sig=1",
+    "https://source.unsplash.com/1200x900/?couple,love&sig=2",
+    "https://source.unsplash.com/1200x900/?couple,smile&sig=3",
   ];
   const memoryCaptions = [
     "Dışarıda ilk buluşmamız :) gülüşün...",
@@ -499,7 +499,7 @@ function ParallaxHeroImage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const src = "/hero.jpg";
+  const src = "https://source.unsplash.com/1600x900/?couple,romance&sig=11";
 
   // Update responsive breakpoint and compute desktop crop height (top half)
   useEffect(() => {

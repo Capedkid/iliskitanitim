@@ -212,19 +212,52 @@ export default function MessagesPage() {
         </section>
 
         <main className="px-6 sm:px-10 pb-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-12">
-              <div className="text-8xl mb-6">🚧</div>
-              <h2 className="text-3xl font-display tracking-wide text-white mb-4">Yapım Aşamasında</h2>
-              <p className="text-white/80 text-lg leading-relaxed mb-6">
-                Mesajlar sayfamız henüz tamamen bitmedi.
-                <br />
-                Çok yakında içerikler burada olacak 💌
-              </p>
-              <div className="inline-flex items-center gap-2 text-rose-400 font-medium">
-                Yakında gelecek →
+          <div className="max-w-5xl mx-auto">
+            {filteredMessages.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {filteredMessages.map((msg) => (
+                  <div key={msg.id} className="group rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-display text-xl tracking-wide text-white truncate">{msg.title}</h3>
+                        <div className="mt-1 text-xs text-white/60 flex items-center gap-2">
+                          <span>{new Date(msg.date).toLocaleDateString('tr-TR')}</span>
+                          <span>•</span>
+                          <span>{msg.author === 'ravi' ? '👨 Ravi' : '👩 Mami'}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {/* favori toggle sadece demo */}}
+                        className={`text-lg ${msg.isFavorite ? 'text-yellow-500' : 'text-white/40 hover:text-yellow-400'} transition-colors`}
+                        aria-label="Favori"
+                      >
+                        ⭐
+                      </button>
+                    </div>
+
+                    <p className="mt-3 text-white/80 text-sm line-clamp-4">{msg.content}</p>
+
+                    <div className="mt-5 flex items-center justify-between">
+                      <span className="inline-flex items-center rounded-full px-3 py-1 text-xs bg-rose-500/20 text-rose-300">
+                        {msg.category}
+                      </span>
+                      <button
+                        onClick={() => { setSelectedMessage(msg); setIsModalOpen(true); }}
+                        className="px-4 py-2 rounded-full text-sm font-medium bg-white/10 hover:bg-white/20 text-white transition-colors"
+                      >
+                        Devamını oku
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
+            ) : (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">💌</div>
+                <h3 className="text-xl font-display text-rose-600 mb-2">Henüz mesaj yok</h3>
+                <p className="text-white/70">Yakında burada aşk mektupları olacak.</p>
+              </div>
+            )}
           </div>
         </main>
 

@@ -64,18 +64,42 @@ export default function GameSelection() {
         </section>
 
         <main className="px-6 sm:px-10 pb-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-12">
-              <div className="text-8xl mb-6">🚧</div>
-              <h2 className="text-3xl font-display tracking-wide text-white mb-4">Yapım Aşamasında</h2>
-              <p className="text-white/80 text-lg leading-relaxed mb-6">
-                Romantik oyunlarımız henüz tamamen bitmedi 
-                <br />
-                Bitince oynayacağız bitanem :) 💖
-              </p>
-              <div className="inline-flex items-center gap-2 text-rose-400 font-medium">
-                Yakında gelecek →
-              </div>
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Link href="/game/walking" className="group rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                <div className="text-5xl mb-4">🚶‍♂️💖</div>
+                <h3 className="font-display text-xl tracking-wide text-white mb-2">Birlikte Yürüme</h3>
+                <p className="text-white/70 text-sm">Engelleri aş, kalpleri topla; birlikte koşun!</p>
+                <div className="mt-4 inline-flex items-center text-rose-400 text-sm">Oyna →</div>
+              </Link>
+
+              <Link href="/game/arrow" className="group rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                <div className="text-5xl mb-4">🏹</div>
+                <h3 className="font-display text-xl tracking-wide text-white mb-2">Aşk Oku</h3>
+                <p className="text-white/70 text-sm">Hedefleri vur, puan kazan ve mesaj yakala!</p>
+                <div className="mt-4 inline-flex items-center text-rose-400 text-sm">Oyna →</div>
+              </Link>
+
+              <Link href="/game/memory" className="group rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                <div className="text-5xl mb-4">🧠💞</div>
+                <h3 className="font-display text-xl tracking-wide text-white mb-2">Anı Eşleştirme</h3>
+                <p className="text-white/70 text-sm">Kartları çevir, eşleri bul, puan topla.</p>
+                <div className="mt-4 inline-flex items-center text-rose-400 text-sm">Oyna →</div>
+              </Link>
+
+              <Link href="/game/letter" className="group rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                <div className="text-5xl mb-4">✉️</div>
+                <h3 className="font-display text-xl tracking-wide text-white mb-2">Aşk Mektubu</h3>
+                <p className="text-white/70 text-sm">Harfleri topla, cümleyi tamamla.</p>
+                <div className="mt-4 inline-flex items-center text-rose-400 text-sm">Oyna →</div>
+              </Link>
+
+              <Link href="/game/hearts" className="group rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                <div className="text-5xl mb-4">❤️</div>
+                <h3 className="font-display text-xl tracking-wide text-white mb-2">Kalp Yağmuru</h3>
+                <p className="text-white/70 text-sm">Düşen kalpleri yakala; en yüksek skoru dene.</p>
+                <div className="mt-4 inline-flex items-center text-rose-400 text-sm">Oyna →</div>
+              </Link>
             </div>
           </div>
         </main>

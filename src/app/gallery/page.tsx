@@ -35,7 +35,7 @@ export default function GalleryPage() {
   const photos: Photo[] = [
     {
       id: 1,
-      src: "/images/gallery/photo-1.jpg",
+      src: "https://source.unsplash.com/1000x1000/?couple,portrait&sig=101",
       caption: "Yanına geldim ;)",
       category: 'first-meeting',
       date: "",
@@ -43,7 +43,7 @@ export default function GalleryPage() {
     },
     {
       id: 2,
-      src: "/images/gallery/photo-2.jpg",
+      src: "https://source.unsplash.com/1000x1000/?couple,walk&sig=102",
       caption: "Birlikte yürürken zaman yavaşlıyor",
       category: 'together',
       date: "",
@@ -51,7 +51,7 @@ export default function GalleryPage() {
     },
     {
       id: 3,
-      src: "/images/gallery/photo-3.jpg",
+      src: "https://source.unsplash.com/1000x1000/?couple,celebration&sig=103",
       caption: "Özel günümüz - Küçük sürprizler, büyük gülüşler",
       category: 'special-days',
       date: "",
@@ -59,7 +59,7 @@ export default function GalleryPage() {
     },
     {
       id: 4,
-      src: "/images/gallery/photo-4.jpg",
+      src: "https://source.unsplash.com/1000x1000/?couple,beach&sig=104",
       caption: "Sahilden güzel bir gün :)",
       category: 'memories',
       date: "",
@@ -67,7 +67,7 @@ export default function GalleryPage() {
     },
     {
       id: 5,
-      src: "/images/gallery/photo-5.jpg",
+      src: "https://source.unsplash.com/1000x1000/?couple,candid&sig=105",
       caption: "Seni izlemek çok güzel",
       category: 'first-meeting',
       date: "",
@@ -75,7 +75,7 @@ export default function GalleryPage() {
     },
     {
       id: 6,
-      src: "/images/gallery/photo-6.jpg",
+      src: "https://source.unsplash.com/1000x1000/?couple,coffee&sig=106",
       caption: "Türk kahvesi :)",
       category: 'together',
       date: "",
@@ -83,7 +83,7 @@ export default function GalleryPage() {
     },
     {
       id: 7,
-      src: "/images/gallery/photo-7.jpg",
+      src: "https://source.unsplash.com/1000x1000/?couple,birthday&sig=107",
       caption: "Doğum günü sürprizi",
       category: 'special-days',
       date: "",
@@ -91,7 +91,7 @@ export default function GalleryPage() {
     },
     {
       id: 8,
-      src: "/images/gallery/photo-8.jpg",
+      src: "https://source.unsplash.com/1000x1000/?couple,city&sig=108",
       caption: "Başbaşa olmak ne güzel... ♥",
       category: 'memories',
       date: "",
