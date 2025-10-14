@@ -113,13 +113,13 @@ export default function Home() {
   }, []);
 
   const memoryImages = [
-    "https://source.unsplash.com/1200x900/?couple,romance&sig=1",
-    "https://source.unsplash.com/1200x900/?couple,love&sig=2",
-    "https://source.unsplash.com/1200x900/?couple,smile&sig=3",
+    "/images/memories/memory-1.png",
+    "/images/memories/memory-2.png",
+    "/images/memories/memory-3.png",
   ];
   const memoryCaptions = [
     "Dışarıda ilk buluşmamız :) gülüşün...",
-    "Mezuniyetin ;) bakışın...",
+    "Bakışın...",
     "O gün...",
   ];
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -303,7 +303,7 @@ export default function Home() {
               </h1>
               <p className="mt-5 text-base sm:text-lg text-black/70 dark:text-white/80 max-w-prose leading-relaxed">
                 Bu sayfa, mavinin huzurunu ve kırmızının tutkusunu bir araya getiriyor :)
-                Anılar, notlar ve şarkılarla dolu küçük bir evimiz olsun.
+                Anılar, notlar ve şarkılarla dolu küçük bir evimiz olsun. (Görseller tanıtım amaçlı olup ai ile yapılmıştır.)
               </p>
 
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
@@ -375,9 +375,9 @@ export default function Home() {
             <ol className="relative border-s border-rose-100">
               {[
                 { title: "İlk bakış", desc: "Zaman gibi .." },
-                { title: "İlk Buluşma", desc: "Waffle ve kumsal..." },
+                { title: "İlk Buluşma", desc: "Kahve..." },
                 { title: "Sana verdiğim ilk çiçek", desc: "Aşkı anmak..." },
-                { title: "Brownie", desc: "Yalnızca bir tatlı değil, bir hikaye." },
+                { title: "Pasta", desc: "Yalnızca bir tatlı değil, bir hikaye." },
                 { title: "Birlikte Hayaller", desc: "Uzak değil, sadece adım adım." },
               ].map((item, idx) => (
                 <li key={idx} className="ms-4 py-4">
@@ -479,8 +479,6 @@ export default function Home() {
 function ParallaxHeroImage() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
-  const [isDesktop, setIsDesktop] = useState<boolean>(false);
-  const [desktopCropHeight, setDesktopCropHeight] = useState<number | null>(null);
   useEffect(() => {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return; // respect reduced motion
@@ -499,55 +497,18 @@ function ParallaxHeroImage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const src = "https://source.unsplash.com/1600x900/?couple,romance&sig=11";
+  const src = "/hero.png";
 
-  // Update responsive breakpoint and compute desktop crop height (top half)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mq = window.matchMedia('(min-width: 1024px)');
-    const handleMQ = () => setIsDesktop(mq.matches);
-    handleMQ();
-    mq.addEventListener('change', handleMQ);
-
-    const recomputeCrop = () => {
-      if (!containerRef.current || !imgRef.current) return;
-      const containerWidth = containerRef.current.clientWidth || 0;
-      const naturalWidth = imgRef.current.naturalWidth || 0;
-      const naturalHeight = imgRef.current.naturalHeight || 0;
-      if (containerWidth > 0 && naturalWidth > 0 && naturalHeight > 0) {
-        const expectedCoverHeight = containerWidth * (naturalHeight / naturalWidth);
-        setDesktopCropHeight(Math.max(200, expectedCoverHeight / 2)); // at least 200px
-      }
-    };
-
-    recomputeCrop();
-    window.addEventListener('resize', recomputeCrop, { passive: true });
-    return () => {
-      mq.removeEventListener('change', handleMQ);
-      window.removeEventListener('resize', recomputeCrop);
-    };
-  }, []);
 
   return (
     <div ref={containerRef} className="relative overflow-hidden rounded-3xl ring-1 ring-rose-300/50 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
-      <div className="bg-rose-50 relative" style={isDesktop && desktopCropHeight ? { height: desktopCropHeight } : undefined}>
+      <div className="bg-rose-50 relative">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           ref={imgRef}
           src={src}
           alt="Hero"
-          className="w-full h-auto object-contain md:h-full md:object-cover md:object-top transition-transform duration-200 will-change-transform"
-          onLoad={() => {
-            if (typeof window === 'undefined') return;
-            if (!containerRef.current || !imgRef.current) return;
-            const containerWidth = containerRef.current.clientWidth || 0;
-            const naturalWidth = imgRef.current.naturalWidth || 0;
-            const naturalHeight = imgRef.current.naturalHeight || 0;
-            if (containerWidth > 0 && naturalWidth > 0 && naturalHeight > 0) {
-              const expectedCoverHeight = containerWidth * (naturalHeight / naturalWidth);
-              setDesktopCropHeight(Math.max(200, expectedCoverHeight / 2));
-            }
-          }}
+          className="w-full h-auto object-contain transition-transform duration-200 will-change-transform"
         />
         {/* overlay gradient */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-rose-50/50 via-white/10 to-rose-100/50" />
