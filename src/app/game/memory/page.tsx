@@ -27,7 +27,7 @@ export default function MemoryGame() {
 
   // Romantik quotes
   const romanticQuotes: Quote[] = [
-    { text: "Seninle her gün bir hikaye", author: "Ravy & Mami" },
+    { text: "Seninle her gün bir hikaye", author: "İsimBir & İsimİki" },
     { text: "Mavinin huzuru, bordonun tutkusu", author: "Bizim Renklerimiz" },
     { text: "Kalplerin ilk kıvılcımı", author: "İlk Mesaj" },
     { text: "Birlikte yürürken zaman yavaşlıyor", author: "Anılarımız" },

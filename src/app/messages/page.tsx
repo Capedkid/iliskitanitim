@@ -25,7 +25,7 @@ interface Message {
   date: string;
   mood: 'happy' | 'romantic' | 'sweet' | 'dreamy';
   isFavorite: boolean;
-  author: 'ravi' | 'mami';
+  author: 'isimBir' | 'isimİki';
 }
 
 export default function MessagesPage() {
@@ -37,12 +37,12 @@ export default function MessagesPage() {
     {
       id: 1,
       title: "Sabah Mesajı",
-      content: "Güne senin sesinle başlamak, günün en güzel kısmı. Mavi gökyüzü gibi huzurlu, bordo gül gibi tutkulu bir gün olsun.",
+      content: "Güne senin sesinle başlamak, günün en güzel kısmı. Mavi gökyüzü gibi huzurlu, kırmızı gül gibi tutkulu bir gün olsun.",
       category: 'daily',
       date: "2024-01-15",
       mood: 'romantic',
       isFavorite: true,
-      author: 'ravi'
+      author: 'isimBir'
     },
     {
       id: 2,
@@ -52,7 +52,7 @@ export default function MessagesPage() {
       date: "2024-01-16",
       mood: 'sweet',
       isFavorite: false,
-      author: 'mami'
+      author: 'isimİki'
     },
     {
       id: 3,
@@ -62,7 +62,7 @@ export default function MessagesPage() {
       date: "2024-01-20",
       mood: 'happy',
       isFavorite: true,
-      author: 'ravi'
+      author: 'isimBir'
     },
     {
       id: 4,
@@ -72,17 +72,17 @@ export default function MessagesPage() {
       date: "2024-02-14",
       mood: 'romantic',
       isFavorite: true,
-      author: 'mami'
+      author: 'isimİki'
     },
     {
       id: 5,
       title: "Aşk Mektubu",
-      content: "Mavinin huzuru, bordonun tutkusu... İkisi bir araya gelince aşk oluyor. Sen benim mavim, ben senin bordonun.",
+      content: "Mavinin huzuru, kırmızının tutkusu... İkisi bir araya gelince aşk oluyor. Sen benim mavim, ben senin kırmızın.",
       category: 'love-notes',
       date: "2024-02-20",
       mood: 'dreamy',
       isFavorite: true,
-      author: 'ravi'
+      author: 'isimBir'
     },
     {
       id: 6,
@@ -92,17 +92,17 @@ export default function MessagesPage() {
       date: "2024-02-25",
       mood: 'sweet',
       isFavorite: false,
-      author: 'mami'
+      author: 'isimİki'
     },
     {
       id: 7,
       title: "Hafta Sonu Mesajı",
-      content: "Birlikte geçirdiğimiz hafta sonu... Mavi ve bordo aynı karede, aynı anda nefes alıyoruz, aynı rüyaları görüyoruz.",
+      content: "Birlikte geçirdiğimiz hafta sonu... Mavi ve kırmızı aynı karede, aynı anda nefes alıyoruz, aynı rüyaları görüyoruz.",
       category: 'weekly',
       date: "2024-03-02",
       mood: 'happy',
       isFavorite: false,
-      author: 'ravi'
+      author: 'isimBir'
     },
     {
       id: 8,
@@ -112,7 +112,7 @@ export default function MessagesPage() {
       date: "2024-03-15",
       mood: 'romantic',
       isFavorite: true,
-      author: 'mami'
+      author: 'isimİki'
     }
   ];
 
@@ -155,7 +155,7 @@ export default function MessagesPage() {
             </div>
             <div class="content">${message.content}</div>
             <div class="footer">
-              <p>Ravy & Mami - Aşk Mektupları</p>
+              <p>İsimBir & İsimİki - Aşk Mektupları</p>
             </div>
           </body>
         </html>
@@ -173,7 +173,7 @@ export default function MessagesPage() {
         {/* Header - Ana sayfa gibi */}
         <header className="px-6 sm:px-10 py-6 flex items-center justify-between">
           <div className="font-display text-xl sm:text-2xl tracking-wide">
-            <span className="text-ours-blue">R</span>avy <span className="text-ours-burgundy">&</span> <span className="text-black">M</span>ami
+            <span className="text-ours-blue">İ</span>simBir <span className="text-ours-burgundy">&</span> <span className="text-black">İ</span>simİki
           </div>
           <nav className="hidden sm:flex items-center gap-6 text-sm">
             <Link href="/" className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600">
@@ -223,7 +223,7 @@ export default function MessagesPage() {
                         <div className="mt-1 text-xs text-white/60 flex items-center gap-2">
                           <span>{new Date(msg.date).toLocaleDateString('tr-TR')}</span>
                           <span>•</span>
-                          <span>{msg.author === 'ravi' ? '👨 Ravi' : '👩 Mami'}</span>
+                          <span>{msg.author === 'isimBir' ? '👨 İsimBir' : '👩 İsimİki'}</span>
                         </div>
                       </div>
                       <button
@@ -307,7 +307,7 @@ export default function MessagesPage() {
                       day: 'numeric' 
                     })}</span>
                     <span>•</span>
-                    <span>{selectedMessage.author === 'ravi' ? '👨 Ravi' : '👩 Mami'}</span>
+                    <span>{selectedMessage.author === 'isimBir' ? '👨 İsimBir' : '👩 İsimİki'}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -345,7 +345,7 @@ export default function MessagesPage() {
               <div className="mt-8 pt-6 border-t border-white/10">
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-white/50">
-                    Ravy & Mami - Aşk Mektupları
+                    İsimBir & İsimİki - Aşk Mektupları
                   </div>
                   <button
                     onClick={closeMessageModal}

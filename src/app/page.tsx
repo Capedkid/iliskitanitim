@@ -263,7 +263,7 @@ export default function Home() {
     <div className="min-h-dvh flex flex-col">
       <header className="px-6 sm:px-10 py-6 flex items-center justify-between">
         <div className="font-display text-xl sm:text-2xl tracking-wide">
-          <span className="text-ours-blue">R</span>avy <span className="text-ours-burgundy">&</span> <span className="text-black">M</span>ami
+            <span className="text-ours-blue">İ</span>simBir <span className="text-ours-burgundy">&</span> <span className="text-black">İ</span>simİki
         </div>
         <nav className="hidden sm:flex items-center gap-6 text-sm">
           <button 

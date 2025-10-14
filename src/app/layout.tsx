@@ -26,12 +26,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Ravy & Mami — Our Story",
+  title: "A & B — Bizim hikayemiz",
   description: "A romantic journey told with memories, messages and music.",
   icons: { icon: "/favicon.ico" },
   metadataBase: new URL("https://example.com"),
   openGraph: {
-    title: "Ravy & Mami",
+    title: "A & B",
     description: "A romantic journey told with memories, messages and music.",
     type: "website",
   },

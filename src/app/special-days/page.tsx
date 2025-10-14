@@ -38,7 +38,7 @@ export default function SpecialDaysPage() {
     {
       id: 1,
       title: "İlk Buluşma",
-      date: "2025-05-19",
+      date: "2024-01-01",
       type: 'anniversary',
       description: "İlk kez buluştuğumuz gün :)",
       isRecurring: true,
@@ -47,8 +47,8 @@ export default function SpecialDaysPage() {
     },
     {
       id: 4,
-      title: "Ravy'nin Doğum Günü",
-      date: "2005-09-13",
+      title: "İsimİki'nin Doğum Günü",
+      date: "2000-05-12",
       type: 'birthday',
       description: "İyi ki doğdun sevgilim :) İyi ki...",
       isRecurring: true,
@@ -57,8 +57,8 @@ export default function SpecialDaysPage() {
     },
     {
       id: 5,
-      title: "Mami'nin Doğum Günü",
-      date: "2002-06-22",
+      title: "İsimBir'in Doğum Günü",
+      date: "2000-05-12",
       type: 'birthday',
       description: ":)",
       isRecurring: true,
@@ -68,7 +68,7 @@ export default function SpecialDaysPage() {
     {
       id: 7,
       title: "6 Aylık Yıldönümü",
-      date: "2025-11-15",
+      date: "2024-06-01",
       type: 'anniversary',
       description: "6 aydır birlikte olduğumuz gün.",
       isRecurring: false,
@@ -78,7 +78,7 @@ export default function SpecialDaysPage() {
     {
       id: 8,
       title: "1 Yıllık Yıldönümü",
-      date: "2026-05-15",
+      date: "2025-01-01",
       type: 'anniversary',
       description: "1 yıldır birlikte olduğumuz gün.",
       isRecurring: false,
@@ -158,7 +158,7 @@ export default function SpecialDaysPage() {
         {/* Header - Ana sayfa gibi */}
         <header className="px-6 sm:px-10 py-6 flex items-center justify-between">
           <div className="font-display text-xl sm:text-2xl tracking-wide">
-            <span className="text-ours-blue">R</span>avy <span className="text-ours-burgundy">&</span> <span className="text-black">M</span>ami
+            <span className="text-ours-blue">İ</span>simBir <span className="text-ours-burgundy">&</span> <span className="text-black">İ</span>simİki
           </div>
           <nav className="hidden sm:flex items-center gap-6 text-sm">
             <Link href="/" className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600">
