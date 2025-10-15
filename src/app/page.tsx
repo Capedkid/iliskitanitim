@@ -97,10 +97,10 @@ export default function Home() {
           >
             Bugünün Notu
           </button>
-          <a className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/gallery">Galeri 📸</a>
-          <a className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/messages">Mesajlar 💌</a>
-          <a className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/special-days">Özel Günler 📅</a>
-          <a className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/game/selection">Oyun 💖</a>
+          <Link className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/gallery">Galeri 📸</Link>
+          <Link className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/messages">Mesajlar 💌</Link>
+          <Link className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/special-days">Özel Günler 📅</Link>
+          <Link className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/game/selection">Oyun 💖</Link>
         </nav>
       </header>
 

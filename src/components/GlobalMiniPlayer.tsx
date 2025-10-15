@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useMiniPlayer } from "@/contexts/MiniPlayerContext";
 import MiniPlayer from "./MiniPlayer";
 
@@ -21,7 +22,12 @@ export default function GlobalMiniPlayer() {
     repeatMode,
     toggleShuffle,
     toggleRepeat,
+    setIsPlaying,
+    setHasStartedPlaying,
   } = useMiniPlayer();
+
+  const pathname = usePathname();
+  const inGame = pathname?.startsWith('/game');
 
   const currentTrack = playlist[currentTrackIndex] || playlist[0] || {
     id: 1,
@@ -36,6 +42,20 @@ export default function GlobalMiniPlayer() {
     setIsClient(true);
   }, []);
 
+  // Oyun sayfalarında müziği durdur ve MiniPlayer'ı gizle
+  useEffect(() => {
+    if (!isClient) return;
+    if (inGame) {
+      try {
+        if (audioRef.current && !audioRef.current.paused) {
+          audioRef.current.pause();
+        }
+      } catch {}
+      setIsPlaying(false);
+      setHasStartedPlaying(false);
+    }
+  }, [inGame, isClient, audioRef, setIsPlaying, setHasStartedPlaying]);
+
   // Server-side'da hiçbir şey render etme
   if (!isClient) {
     return null;
@@ -43,6 +63,11 @@ export default function GlobalMiniPlayer() {
 
   return (
     <>
+      {/* Spacer to prevent footer overlap when MiniPlayer is visible */}
+      {hasStartedPlaying && !inGame && (
+        <div aria-hidden className="h-20 md:h-36" />
+      )}
+
       {/* Audio element sadece client-side'da render edilir */}
       <audio
         ref={audioRef}
@@ -73,10 +98,11 @@ export default function GlobalMiniPlayer() {
       </audio>
 
       {/* MiniPlayer sadece hasStartedPlaying true olduğunda render edilir */}
-      {hasStartedPlaying && (
+      {hasStartedPlaying && !inGame && (
         <MiniPlayer 
           getAudio={() => audioRef.current}
           currentTrack={currentTrack}
+          isPlayingProp={isPlaying}
           onNext={playNext}
           onPrevious={playPrevious}
           onVolumeChange={handleVolumeChange}

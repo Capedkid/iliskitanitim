@@ -8,6 +8,7 @@ type MiniPlayerProps = {
     title: string;
     artist: string;
   };
+  isPlayingProp?: boolean;
   onNext?: () => void;
   onPrevious?: () => void;
   onVolumeChange?: (volume: number) => void;
@@ -22,6 +23,7 @@ type MiniPlayerProps = {
 export default function MiniPlayer({ 
   getAudio, 
   currentTrack,
+  isPlayingProp,
   onNext,
   onPrevious,
   onVolumeChange,
@@ -39,6 +41,14 @@ export default function MiniPlayer({
   const [enter, setEnter] = useState(false);
 
   useEffect(() => {
+    // Sync initial playing state immediately on mount
+    const a0 = getAudio();
+    if (a0) {
+      try {
+        setIsPlaying(!a0.paused);
+      } catch {}
+    }
+
     const audio = getAudio();
     if (!audio) return;
     const onPlay = () => setIsPlaying(true);
@@ -90,7 +100,7 @@ export default function MiniPlayer({
 
   return (
     <div 
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[min(560px,92vw)] rounded-2xl bg-white/90 backdrop-blur ring-1 ring-black/10 shadow-lg transition-all duration-500 ease-out ${isExpanded ? 'h-32' : 'h-12'} group ${enter ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[min(560px,92vw)] rounded-2xl bg-black/60 backdrop-blur ring-1 ring-rose-300/40 shadow-lg transition-all duration-500 ease-out ${isExpanded ? 'h-32' : 'h-12'} group ${enter ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
       onMouseEnter={() => {
         // Sadece masaüstünde otomatik aç
         if (window.innerWidth >= 768) {
@@ -107,19 +117,19 @@ export default function MiniPlayer({
       {/* Compact View */}
       <div className="flex items-center gap-3 px-4 py-2 h-12">
         <button onClick={toggle} className="h-8 w-8 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-colors" aria-label="Play/Pause">
-          {isPlaying ? "❚❚" : "▶"}
+          {(typeof isPlayingProp === 'boolean' ? isPlayingProp : isPlaying) ? "❚❚" : "▶"}
         </button>
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-medium text-black truncate">
+          <div className="text-sm font-medium text-white truncate">
             {currentTrack?.title || "Şarkı Seçilmedi"}
           </div>
-          <div className="text-xs text-black/60 truncate">
+          <div className="text-xs text-white/70 truncate">
             {currentTrack?.artist || "Henüz müzik çalmadınız"}
           </div>
         </div>
         <button 
           onClick={() => setIsExpanded(!isExpanded)}
-          className="h-6 w-6 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center md:hidden"
+          className="h-6 w-6 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center md:hidden text-white"
           aria-label="Expand"
         >
           {isExpanded ? "▼" : "▲"}
@@ -143,12 +153,12 @@ export default function MiniPlayer({
           </div>
 
           {/* Controls Row */}
-          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <button 
                 onClick={onToggleShuffle}
                 className={`h-8 w-8 rounded-full flex items-center justify-center transition-colors ${
-                  isShuffled ? 'bg-rose-500 text-white' : 'bg-black/10 hover:bg-black/20'
+                  isShuffled ? 'bg-rose-500 text-white' : 'bg-white/10 text-white hover:bg-white/20'
                 }`}
                 aria-label="Shuffle"
               >
@@ -156,14 +166,14 @@ export default function MiniPlayer({
               </button>
               <button 
                 onClick={onPrevious}
-                className="h-8 w-8 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center"
+                className="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center justify-center"
                 aria-label="Previous"
               >
                 ⏮
               </button>
               <button 
                 onClick={onNext}
-                className="h-8 w-8 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center"
+                className="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center justify-center"
                 aria-label="Next"
               >
                 ⏭
@@ -171,7 +181,7 @@ export default function MiniPlayer({
               <button 
                 onClick={onToggleRepeat}
                 className={`h-8 w-8 rounded-full flex items-center justify-center transition-colors ${
-                  repeatMode !== 'none' ? 'bg-rose-500 text-white' : 'bg-black/10 hover:bg-black/20'
+                  repeatMode !== 'none' ? 'bg-rose-500 text-white' : 'bg-white/10 text-white hover:bg-white/20'
                 }`}
                 aria-label="Repeat"
               >
@@ -181,7 +191,7 @@ export default function MiniPlayer({
 
             {/* Volume Control */}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-black/60">🔊</span>
+              <span className="text-xs text-white/70">🔊</span>
               <input 
                 type="range" 
                 min={0} 
