@@ -36,6 +36,7 @@ export default function MiniPlayer({
   const [progress, setProgress] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const rafRef = useRef<number | null>(null);
+  const [enter, setEnter] = useState(false);
 
   useEffect(() => {
     const audio = getAudio();
@@ -61,6 +62,12 @@ export default function MiniPlayer({
     };
   }, [getAudio]);
 
+  useEffect(() => {
+    // Trigger enter animation on mount
+    const id = requestAnimationFrame(() => setEnter(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
   const toggle = async () => {
     // Hero'daki aynı fonksiyonu kullan
     if (onTogglePlay) {
@@ -83,7 +90,7 @@ export default function MiniPlayer({
 
   return (
     <div 
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[min(560px,92vw)] rounded-2xl bg-white/90 backdrop-blur ring-1 ring-black/10 shadow-lg transition-all duration-300 ${isExpanded ? 'h-32' : 'h-12'} group`}
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[min(560px,92vw)] rounded-2xl bg-white/90 backdrop-blur ring-1 ring-black/10 shadow-lg transition-all duration-500 ease-out ${isExpanded ? 'h-32' : 'h-12'} group ${enter ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
       onMouseEnter={() => {
         // Sadece masaüstünde otomatik aç
         if (window.innerWidth >= 768) {
@@ -104,10 +111,10 @@ export default function MiniPlayer({
         </button>
         <div className="flex-1 min-w-0">
           <div className="text-sm font-medium text-black truncate">
-            {currentTrack?.title || "Mavi"}
+            {currentTrack?.title || "Şarkı Seçilmedi"}
           </div>
           <div className="text-xs text-black/60 truncate">
-            {currentTrack?.artist || "Gökhan Türkmen"}
+            {currentTrack?.artist || "Henüz müzik çalmadınız"}
           </div>
         </div>
         <button 

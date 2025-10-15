@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Lightbox from "@/components/Lightbox";
-import MiniPlayer from "@/components/MiniPlayer";
+import { useMiniPlayer } from "@/contexts/MiniPlayerContext";
 
 function HeartDivider() {
   return (
@@ -20,97 +20,8 @@ function HeartDivider() {
 }
 
 export default function Home() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-  const [volume, setVolume] = useState(0.7);
-  const [isShuffled, setIsShuffled] = useState(false);
-  const [repeatMode, setRepeatMode] = useState<'none' | 'one' | 'all'>('none');
-  
-  // Otomatik şarkı tarama sistemi
-  const [playlist, setPlaylist] = useState<Array<{
-    id: number;
-    title: string;
-    artist: string;
-    src: string;
-    duration: string;
-  }>>([]);
+  const { onTogglePlay, isPlaying } = useMiniPlayer();
 
-  // Dosya adından şarkı bilgilerini çıkarma fonksiyonu
-  const parseAudioFilename = (filename: string) => {
-    // .mp3 uzantısını kaldır
-    const nameWithoutExt = filename.replace(/\.mp3$/i, '');
-    
-    // "Şarkı Adı - Sanatçı" formatını parse et
-    const parts = nameWithoutExt.split(' - ');
-    
-    if (parts.length >= 2) {
-      return {
-        title: parts[0].trim(),
-        artist: parts.slice(1).join(' - ').trim(), // Birden fazla " - " varsa
-        originalFilename: filename // Orijinal dosya adını sakla
-      };
-    } else {
-      // Format uygun değilse, dosya adını şarkı adı olarak kullan
-      return {
-        title: nameWithoutExt,
-        artist: "Bilinmeyen Sanatçı",
-        originalFilename: filename
-      };
-    }
-  };
-
-  // Şarkı dosyalarını otomatik tarama
-  useEffect(() => {
-    const scanAudioFiles = async () => {
-      try {
-        // Public klasöründeki audio dosyalarını taramak için API endpoint'i kullanacağız
-        const response = await fetch('/api/audio-files');
-        if (response.ok) {
-          const files = await response.json();
-          const audioFiles = files
-            .filter((file: string) => file.toLowerCase().endsWith('.mp3'))
-            .map((file: string, index: number) => {
-              const { title, artist, originalFilename } = parseAudioFilename(file);
-              return {
-                id: index + 1,
-                title,
-                artist,
-                src: `/audio/${originalFilename}`, // Orijinal dosya adını kullan
-                duration: "0:00" // Gerçek süre için audio element'ten alınabilir
-              };
-            });
-          
-          // Mavi şarkısını ilk sıraya koy
-          const maviIndex = audioFiles.findIndex((song: { title: string; src: string }) => 
-            song.title.toLowerCase().includes('mavi') || 
-            song.src.includes('mavi.mp3')
-          );
-          
-          if (maviIndex > 0) {
-            // Mavi şarkısını bul ve ilk sıraya taşı
-            const maviSong = audioFiles[maviIndex];
-            const otherSongs = audioFiles.filter((_: unknown, index: number) => index !== maviIndex);
-            setPlaylist([maviSong, ...otherSongs]);
-          } else {
-            setPlaylist(audioFiles);
-          }
-        }
-      } catch (error) {
-        console.error('Şarkı dosyaları taranamadı:', error);
-        // Fallback: mevcut şarkıyı kullan
-        setPlaylist([{
-          id: 1,
-          title: "Mavi",
-          artist: "Gökhan Türkmen",
-          src: "/audio/mavi.mp3",
-          duration: "3:45"
-        }]);
-      }
-    };
-
-    scanAudioFiles();
-  }, []);
 
   const memoryImages = [
     "/images/memories/memory-1.png",
@@ -137,104 +48,6 @@ export default function Home() {
     }
   };
 
-  const currentTrack = playlist[currentTrackIndex] || playlist[0] || {
-    id: 1,
-    title: "Mavi",
-    artist: "Gökhan Türkmen", 
-    src: "/audio/mavi.mp3",
-    duration: "3:45"
-  };
-
-  const onTogglePlay = async () => {
-    if (!audioRef.current) return;
-    try {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        // Ensure the element has a loaded source
-        if (audioRef.current.readyState < 2) {
-          audioRef.current.load();
-        }
-        await audioRef.current.play();
-        setIsPlaying(true);
-      }
-    } catch (err) {
-      console.error("Audio play error", err);
-      alert("Şarkı çalınamadı. Dosya formatını veya yolu kontrol edin.");
-    }
-  };
-
-  const playNext = () => {
-    if (repeatMode === 'one') {
-      if (audioRef.current) {
-        audioRef.current.currentTime = 0;
-        audioRef.current.play();
-      }
-      return;
-    }
-    
-    let nextIndex;
-    if (isShuffled) {
-      nextIndex = Math.floor(Math.random() * playlist.length);
-    } else {
-      nextIndex = (currentTrackIndex + 1) % playlist.length;
-    }
-    
-    setCurrentTrackIndex(nextIndex);
-    if (audioRef.current) {
-      audioRef.current.src = playlist[nextIndex].src;
-      audioRef.current.load();
-      if (isPlaying) {
-        audioRef.current.play();
-      }
-    }
-  };
-
-  const playPrevious = () => {
-    // If we are a few seconds into the current track, just restart it
-    const audio = audioRef.current;
-    if (audio && audio.currentTime > 3) {
-      audio.currentTime = 0;
-      if (isPlaying) {
-        audio.play();
-      }
-      return;
-    }
-
-    let prevIndex;
-    if (isShuffled) {
-      prevIndex = Math.floor(Math.random() * playlist.length);
-    } else {
-      prevIndex = currentTrackIndex === 0 ? playlist.length - 1 : currentTrackIndex - 1;
-    }
-    
-    setCurrentTrackIndex(prevIndex);
-    if (audioRef.current) {
-      audioRef.current.src = playlist[prevIndex].src;
-      audioRef.current.load();
-      if (isPlaying) {
-        audioRef.current.play();
-      }
-    }
-  };
-
-  const handleVolumeChange = (newVolume: number) => {
-    setVolume(newVolume);
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume;
-    }
-  };
-
-  const toggleShuffle = () => {
-    setIsShuffled(!isShuffled);
-  };
-
-  const toggleRepeat = () => {
-    const modes: ('none' | 'one' | 'all')[] = ['none', 'one', 'all'];
-    const currentIndex = modes.indexOf(repeatMode);
-    setRepeatMode(modes[(currentIndex + 1) % modes.length]);
-  };
 
   // Observe sections to update active nav link
   const sectionsRef = useRef<{ id: string; el: HTMLElement | null }[]>([]);
@@ -428,40 +241,6 @@ export default function Home() {
         </div>
       </footer>
 
-      <audio
-        ref={audioRef}
-        preload="none"
-        onError={() => {
-          console.error("Audio element failed to load source", currentTrack.src);
-          alert("Ses dosyası yüklenemedi. Dosya yolunu ve formatı kontrol edin.");
-        }}
-        onEnded={() => {
-          if (repeatMode === 'all') {
-            playNext();
-          } else if (repeatMode === 'none') {
-            playNext();
-          }
-        }}
-        onCanPlay={() => {
-          // Optional: could auto-play after first user gesture via button
-        }}
-      >
-        <source src={currentTrack.src} type="audio/mpeg" />
-      </audio>
-
-      <MiniPlayer 
-        getAudio={() => audioRef.current}
-        currentTrack={currentTrack}
-        onNext={playNext}
-        onPrevious={playPrevious}
-        onVolumeChange={handleVolumeChange}
-        volume={volume}
-        isShuffled={isShuffled}
-        repeatMode={repeatMode}
-        onToggleShuffle={toggleShuffle}
-        onToggleRepeat={toggleRepeat}
-        onTogglePlay={onTogglePlay}
-      />
 
       <Lightbox
         isOpen={lightboxOpen}

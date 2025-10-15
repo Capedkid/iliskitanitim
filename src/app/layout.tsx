@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display, Inter } from "next/font/google";
 import { Analytics } from '@vercel/analytics/react';
+import { MiniPlayerProvider } from "@/contexts/MiniPlayerContext";
+import GlobalMiniPlayer from "@/components/GlobalMiniPlayer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -51,7 +53,10 @@ export default function RootLayout({
           // These are already set via font loaders as CSS variables
         }}
       >
-        {children}
+        <MiniPlayerProvider>
+          {children}
+          <GlobalMiniPlayer />
+        </MiniPlayerProvider>
         <Analytics />
       </body>
     </html>
