@@ -24,6 +24,7 @@ export default function GlobalMiniPlayer() {
     toggleRepeat,
     setIsPlaying,
     setHasStartedPlaying,
+    setCurrentTrackIndex,
   } = useMiniPlayer();
 
   const pathname = usePathname();
@@ -103,6 +104,7 @@ export default function GlobalMiniPlayer() {
           getAudio={() => audioRef.current}
           currentTrack={currentTrack}
           isPlayingProp={isPlaying}
+          
           onNext={playNext}
           onPrevious={playPrevious}
           onVolumeChange={handleVolumeChange}
