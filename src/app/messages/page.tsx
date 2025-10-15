@@ -140,22 +140,70 @@ export default function MessagesPage() {
           <head>
             <title>${message.title}</title>
             <style>
-              body { font-family: Arial, sans-serif; padding: 40px; line-height: 1.6; }
-              .header { text-align: center; margin-bottom: 30px; }
-              .title { font-size: 24px; color: #e11d48; margin-bottom: 10px; }
-              .date { color: #666; font-size: 14px; }
-              .content { font-size: 16px; margin: 20px 0; }
-              .footer { text-align: center; margin-top: 40px; color: #666; font-size: 12px; }
+              /* Page setup */
+              @page { size: A4; margin: 20mm; }
+              @media print {
+                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              }
+
+              /* Base typography */
+              :root {
+                --rose: #e11d48; /* rose-600 */
+                --ink: #111827; /* gray-900 */
+                --muted: #6B7280; /* gray-500 */
+                --rule: #e5e7eb; /* gray-200 */
+              }
+              html, body { height: 100%; }
+              body { 
+                font-family: Georgia, 'Times New Roman', Times, serif; 
+                color: var(--ink);
+                line-height: 1.7; 
+              }
+
+              .sheet { 
+                max-width: 700px; 
+                margin: 0 auto; 
+              }
+              .header { text-align: center; margin-bottom: 14mm; }
+              .brand { font-size: 11pt; color: var(--muted); letter-spacing: .06em; }
+              .title { font-size: 22pt; margin: 4mm 0 2mm; color: var(--rose); font-weight: 700; }
+              .meta { color: var(--muted); font-size: 11pt; }
+              .rule { height: 1px; background: var(--rule); margin: 6mm 0 8mm; }
+
+              .content { font-size: 12.5pt; }
+              .content p { margin: 0 0 5mm; }
+              .content p:last-child { margin-bottom: 0; }
+
+              .footer { 
+                margin-top: 14mm; 
+                color: var(--muted); 
+                font-size: 10.5pt; 
+                text-align: center; 
+              }
+
+              /* Avoid awkward breaks */
+              .header, .footer { page-break-inside: avoid; }
+              .content { orphans: 3; widows: 3; }
             </style>
           </head>
           <body>
-            <div class="header">
-              <div class="title">${message.title}</div>
-              <div class="date">${new Date(message.date).toLocaleDateString('tr-TR')}</div>
-            </div>
-            <div class="content">${message.content}</div>
-            <div class="footer">
-              <p>İsimBir & İsimİki - Aşk Mektupları</p>
+            <div class="sheet">
+              <div class="header">
+                <div class="brand">İsimBir &amp; İsimİki</div>
+                <div class="title">${message.title}</div>
+                <div class="meta">
+                  ${new Date(message.date).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  · ${message.author === 'isimBir' ? 'İsimBir' : 'İsimİki'}
+                </div>
+              </div>
+              <div class="rule"></div>
+              <div class="content">
+                ${message.content
+                  .split('\n')
+                  .map(p => `<p>${p.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`) 
+                  .join('')}
+              </div>
+              <div class="footer">İsimBir &amp; İsimİki — Aşk Mektupları</div>
             </div>
           </body>
         </html>
@@ -223,13 +271,13 @@ export default function MessagesPage() {
                         <div className="mt-1 text-xs text-white/60 flex items-center gap-2">
                           <span>{new Date(msg.date).toLocaleDateString('tr-TR')}</span>
                           <span>•</span>
-                          <span>{msg.author === 'isimBir' ? '👨 İsimBir' : '👩 İsimİki'}</span>
+                          <span>{msg.author === 'isimBir' ? 'İsimBir' : 'İsimİki'}</span>
                         </div>
                       </div>
                       <button
-                        onClick={() => {/* favori toggle sadece demo */}}
-                        className={`text-lg ${msg.isFavorite ? 'text-yellow-500' : 'text-white/40 hover:text-yellow-400'} transition-colors`}
+                        className="text-lg text-yellow-500 transition-colors"
                         aria-label="Favori"
+                        disabled
                       >
                         ⭐
                       </button>
@@ -237,10 +285,7 @@ export default function MessagesPage() {
 
                     <p className="mt-3 text-white/80 text-sm line-clamp-4">{msg.content}</p>
 
-                    <div className="mt-5 flex items-center justify-between">
-                      <span className="inline-flex items-center rounded-full px-3 py-1 text-xs bg-rose-500/20 text-rose-300">
-                        {msg.category}
-                      </span>
+                    <div className="mt-5 flex items-center justify-end">
                       <button
                         onClick={() => { setSelectedMessage(msg); setIsModalOpen(true); }}
                         className="px-4 py-2 rounded-full text-sm font-medium bg-white/10 hover:bg-white/20 text-white transition-colors"
@@ -307,7 +352,7 @@ export default function MessagesPage() {
                       day: 'numeric' 
                     })}</span>
                     <span>•</span>
-                    <span>{selectedMessage.author === 'isimBir' ? '👨 İsimBir' : '👩 İsimİki'}</span>
+                    <span>{selectedMessage.author === 'isimBir' ? 'İsimBir' : 'İsimİki'}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
