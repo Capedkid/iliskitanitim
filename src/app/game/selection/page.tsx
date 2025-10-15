@@ -22,26 +22,6 @@ export default function GameSelection() {
       {/* Ana sayfadaki gibi arka plan zaten globals.css'de tanımlı */}
 
       <div className="relative z-10">
-        {/* Header - Ana sayfa gibi */}
-        <header className="px-6 sm:px-10 py-6 flex items-center justify-between">
-          <div className="font-display text-xl sm:text-2xl tracking-wide">
-            <span className="text-ours-blue">İ</span>simBir <span className="text-ours-burgundy">&</span> <span className="text-black">İ</span>simİki
-          </div>
-          <nav className="hidden sm:flex items-center gap-6 text-sm">
-            <Link href="/" className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600">
-              Ana Sayfa
-            </Link>
-            <Link href="/gallery" className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600">
-              Galeri
-            </Link>
-            <Link href="/messages" className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600">
-              Mesajlar
-            </Link>
-            <Link href="/special-days" className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600">
-              Özel Günler
-            </Link>
-          </nav>
-        </header>
 
         {/* Page Title Section */}
         <section className="px-6 sm:px-10 pt-10 pb-16 sm:pt-16 sm:pb-24">

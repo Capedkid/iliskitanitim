@@ -74,36 +74,7 @@ export default function Home() {
 
   return (
     <div className="min-h-dvh flex flex-col">
-      <header className="px-6 sm:px-10 py-6 flex items-center justify-between">
-        <div className="font-display text-xl sm:text-2xl tracking-wide">
-            <span className="text-ours-blue">İ</span>simBir <span className="text-ours-burgundy">&</span> <span className="text-black">İ</span>simİki
-        </div>
-        <nav className="hidden sm:flex items-center gap-6 text-sm">
-          <button 
-            onClick={() => scrollToSection("memories")}
-            className={`transition-all duration-200 hover:scale-105 active:scale-95 ${activeId === "memories" ? "text-rose-600" : "hover:text-rose-600"}`}
-          >
-            Anılar
-          </button>
-          <button 
-            onClick={() => scrollToSection("story")}
-            className={`transition-all duration-200 hover:scale-105 active:scale-95 ${activeId === "story" ? "text-rose-600" : "hover:text-rose-600"}`}
-          >
-            Hikayemiz
-          </button>
-          <button 
-            onClick={() => scrollToSection("daily-note")}
-            className={`transition-all duration-200 hover:scale-105 active:scale-95 ${activeId === "daily-note" ? "text-rose-600" : "hover:text-rose-600"}`}
-          >
-            Bugünün Notu
-          </button>
-          <Link className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/gallery">Galeri 📸</Link>
-          <Link className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/messages">Mesajlar 💌</Link>
-          <Link className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/special-days">Özel Günler 📅</Link>
-          <Link className="transition-all duration-200 hover:scale-105 active:scale-95 hover:text-rose-600" href="/game/selection">Oyun 💖</Link>
-        </nav>
-      </header>
-
+      
       <main className="flex-1">
         {/* Hero */}
         <section className="px-6 sm:px-10 pt-10 pb-16 sm:pt-16 sm:pb-24">
@@ -137,7 +108,7 @@ export default function Home() {
               {/* Removed track info under hero buttons per request */}
             </div>
 
-            <div className="relative">
+            <div className="relative overflow-hidden">
               <ParallaxHeroImage />
               <div className="absolute -left-6 -top-6 h-24 w-24 rounded-full bg-ours-blue/15 blur-2xl" />
               <div className="absolute -right-8 -bottom-8 h-28 w-28 rounded-full bg-ours-burgundy/20 blur-2xl" />

@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { MiniPlayerProvider } from "@/contexts/MiniPlayerContext";
 import GlobalMiniPlayer from "@/components/GlobalMiniPlayer";
 import Footer from "@/components/Footer";
+import HeaderSwitcher from "@/components/HeaderSwitcher";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -55,6 +56,7 @@ export default function RootLayout({
         }}
       >
         <MiniPlayerProvider>
+          <HeaderSwitcher />
           {children}
           <GlobalMiniPlayer />
           <Footer />
