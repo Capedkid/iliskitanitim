@@ -80,16 +80,16 @@ export default function Home() {
         </div>
         <nav className="hidden sm:flex items-center gap-6 text-sm">
           <button 
-            onClick={() => scrollToSection("story")}
-            className={`transition-all duration-200 hover:scale-105 active:scale-95 ${activeId === "story" ? "text-rose-600" : "hover:text-rose-600"}`}
-          >
-            Hikayemiz
-          </button>
-          <button 
             onClick={() => scrollToSection("memories")}
             className={`transition-all duration-200 hover:scale-105 active:scale-95 ${activeId === "memories" ? "text-rose-600" : "hover:text-rose-600"}`}
           >
             Anılar
+          </button>
+          <button 
+            onClick={() => scrollToSection("story")}
+            className={`transition-all duration-200 hover:scale-105 active:scale-95 ${activeId === "story" ? "text-rose-600" : "hover:text-rose-600"}`}
+          >
+            Hikayemiz
           </button>
           <button 
             onClick={() => scrollToSection("daily-note")}
@@ -221,25 +221,6 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="px-6 sm:px-10 pb-10 text-center text-sm">
-        <div className="mx-auto max-w-5xl">
-          <div className="mt-8">
-            <HeartDivider />
-          </div>
-          <div className="mt-6 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/40 p-6">
-            <p className="text-white/80">“Kalbin kalbime değdiğinde, dünya sessizleşir.”</p>
-            <div className="mt-3 text-white/60">
-              <Link href="/" className="hover:text-rose-300 transition-colors">Ana Sayfa</Link>
-              <span className="mx-2">·</span>
-              <Link href="/gallery" className="hover:text-rose-300 transition-colors">Galeri</Link>
-              <span className="mx-2">·</span>
-              <Link href="/messages" className="hover:text-rose-300 transition-colors">Mesajlar</Link>
-              <span className="mx-2">·</span>
-              <Link href="/special-days" className="hover:text-rose-300 transition-colors">Özel Günler</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
 
 
       <Lightbox

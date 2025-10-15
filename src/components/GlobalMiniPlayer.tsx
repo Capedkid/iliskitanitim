@@ -64,11 +64,6 @@ export default function GlobalMiniPlayer() {
 
   return (
     <>
-      {/* Spacer to prevent footer overlap when MiniPlayer is visible */}
-      {hasStartedPlaying && !inGame && (
-        <div aria-hidden className="h-20 md:h-36" />
-      )}
-
       {/* Audio element sadece client-side'da render edilir */}
       <audio
         ref={audioRef}
