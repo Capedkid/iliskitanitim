@@ -1,264 +1,137 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-interface Character {
-  id: 'blue' | 'burgundy';
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  velocityY: number;
-  isJumping: boolean;
-  color: string;
-  emoji: string;
-}
-
-interface Obstacle {
-  id: number;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  type: 'rock' | 'gap';
-}
-
-interface Heart {
-  id: number;
-  x: number;
-  y: number;
-  collected: boolean;
-}
-
-interface GameState {
-  score: number;
-  distance: number;
-  gameActive: boolean;
-  gameComplete: boolean;
-  speed: number;
-}
+type Obstacle = { id: number; x: number; y: number; width: number; height: number };
 
 export default function WalkingGame() {
-  const [characters, setCharacters] = useState<Character[]>([
-    { id: 'blue', x: 100, y: 200, width: 40, height: 40, velocityY: 0, isJumping: false, color: '#3b82f6', emoji: '👨' },
-    { id: 'burgundy', x: 150, y: 200, width: 40, height: 40, velocityY: 0, isJumping: false, color: '#6b0f1a', emoji: '👩' }
-  ]);
-  
-  const [obstacles, setObstacles] = useState<Obstacle[]>([]);
-  const [hearts, setHearts] = useState<Heart[]>([]);
-  const [gameState, setGameState] = useState<GameState>({
-    score: 0,
-    distance: 0,
-    gameActive: false,
-    gameComplete: false,
-    speed: 2
-  });
-  
-  const [message, setMessage] = useState("");
-  const gameAreaRef = useRef<HTMLDivElement>(null);
+  const gameAreaRef = useRef<HTMLDivElement | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const lastTsRef = useRef<number | null>(null);
   const obstacleIdRef = useRef(0);
-  const heartIdRef = useRef(0);
-  const gameLoopRef = useRef<number | null>(null);
+  const spawnTimerRef = useRef(0);
 
-  const GRAVITY = 0.8;
-  const JUMP_FORCE = -15;
-  const GROUND_Y = 200;
+  // World constants
+  const GAME_HEIGHT = 320; // h-80
+  const GROUND_HEIGHT = 96; // h-24
+  const GROUND_TOP = GAME_HEIGHT - GROUND_HEIGHT; // 224
+  const PLAYER_X = 96;  // fixed x
+  const PLAYER_WIDTH = 48;
+  const PLAYER_HEIGHT = 44;
+  const GRAVITY = 2000; // px/s^2
+  const JUMP_VELOCITY = -680; // px/s
 
-  // Oyunu başlat
-  const startGame = () => {
-    setGameState({
-      score: 0,
-      distance: 0,
-      gameActive: true,
-      gameComplete: false,
-      speed: 2
-    });
-    setCharacters([
-      { id: 'blue', x: 100, y: GROUND_Y, width: 40, height: 40, velocityY: 0, isJumping: false, color: '#3b82f6', emoji: '👨' },
-      { id: 'burgundy', x: 150, y: GROUND_Y, width: 40, height: 40, velocityY: 0, isJumping: false, color: '#6b0f1a', emoji: '👩' }
-    ]);
+  // State
+  const [playerY, setPlayerY] = useState(GROUND_TOP - PLAYER_HEIGHT);
+  const [velY, setVelY] = useState(0);
+  const [isJumping, setIsJumping] = useState(false);
+  const [obstacles, setObstacles] = useState<Obstacle[]>([]);
+  const [running, setRunning] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+
+  const resetGame = () => {
+    setPlayerY(GROUND_TOP - PLAYER_HEIGHT);
+    setVelY(0);
+    setIsJumping(false);
     setObstacles([]);
-    setHearts([]);
-    setMessage("");
-    obstacleIdRef.current = 0;
-    heartIdRef.current = 0;
+    setScore(0);
+    spawnTimerRef.current = 0;
+    lastTsRef.current = null;
+    setGameOver(false);
+    setRunning(true);
   };
 
-  // Oyunu durdur
-  const stopGame = () => {
-    setGameState(prev => ({ ...prev, gameActive: false, gameComplete: true }));
-    if (gameLoopRef.current) {
-      cancelAnimationFrame(gameLoopRef.current);
-    }
+  const endGame = () => {
+    setRunning(false);
+    setGameOver(true);
   };
 
-  // Zıplama - useCallback ile optimize et
-  const jump = useCallback(() => {
-    if (!gameState.gameActive) return;
-    
-    setCharacters(prev => prev.map(char => {
-      if (!char.isJumping) {
-        return { ...char, velocityY: JUMP_FORCE, isJumping: true };
-      }
-      return char;
-    }));
-  }, [gameState.gameActive, JUMP_FORCE]);
-
-  // Engel oluştur
-  const createObstacle = () => {
-    if (!gameAreaRef.current) return;
-    
-    const gameArea = gameAreaRef.current;
-    const obstacleType = Math.random() > 0.5 ? 'rock' : 'gap';
-    
-    const obstacle: Obstacle = {
-      id: obstacleIdRef.current++,
-      x: gameArea.clientWidth + 50,
-      y: obstacleType === 'rock' ? GROUND_Y - 30 : GROUND_Y + 20,
-      width: obstacleType === 'rock' ? 30 : 60,
-      height: obstacleType === 'rock' ? 30 : 20,
-      type: obstacleType
-    };
-    
-    setObstacles(prev => [...prev, obstacle]);
+  const jump = () => {
+    if (!running) return;
+    if (isJumping) return;
+    setVelY(JUMP_VELOCITY);
+    setIsJumping(true);
   };
 
-  // Kalp oluştur
-  const createHeart = () => {
-    if (!gameAreaRef.current) return;
-    
-    const gameArea = gameAreaRef.current;
-    
-    const heart: Heart = {
-      id: heartIdRef.current++,
-      x: gameArea.clientWidth + 50,
-      y: GROUND_Y - 60,
-      collected: false
-    };
-    
-    setHearts(prev => [...prev, heart]);
-  };
-
-  // Ana oyun döngüsü
+  // Input
   useEffect(() => {
-    if (!gameState.gameActive) return;
-
-    const gameLoop = () => {
-      // Karakterleri güncelle
-      setCharacters(prev => prev.map(char => {
-        let newY = char.y + char.velocityY;
-        let newVelocityY = char.velocityY + GRAVITY;
-        let newIsJumping = char.isJumping;
-
-        // Yer çekimi ve zıplama
-        if (newY >= GROUND_Y) {
-          newY = GROUND_Y;
-          newVelocityY = 0;
-          newIsJumping = false;
-        }
-
-        return { ...char, y: newY, velocityY: newVelocityY, isJumping: newIsJumping };
-      }));
-
-      // Engelleri hareket ettir
-      setObstacles(prev => prev.map(obs => ({
-        ...obs,
-        x: obs.x - gameState.speed
-      })).filter(obs => obs.x > -100));
-
-      // Kalpleri hareket ettir
-      setHearts(prev => prev.map(heart => ({
-        ...heart,
-        x: heart.x - gameState.speed
-      })).filter(heart => heart.x > -50));
-
-      // Mesafeyi artır
-      setGameState(prev => ({ ...prev, distance: prev.distance + gameState.speed }));
-
-      // Hızı artır (zamanla)
-      if (gameState.distance % 1000 === 0) {
-        setGameState(prev => ({ ...prev, speed: Math.min(prev.speed + 0.2, 6) }));
-      }
-
-      gameLoopRef.current = requestAnimationFrame(gameLoop);
-    };
-
-    gameLoopRef.current = requestAnimationFrame(gameLoop);
-
-    return () => {
-      if (gameLoopRef.current) {
-        cancelAnimationFrame(gameLoopRef.current);
-      }
-    };
-  }, [gameState.gameActive, gameState.speed, gameState.distance]);
-
-  // Çarpışma kontrolü
-  useEffect(() => {
-    if (!gameState.gameActive) return;
-
-    const checkCollisions = () => {
-      characters.forEach(char => {
-        // Engel çarpışması
-        obstacles.forEach(obstacle => {
-          if (char.x < obstacle.x + obstacle.width &&
-              char.x + char.width > obstacle.x &&
-              char.y < obstacle.y + obstacle.height &&
-              char.y + char.height > obstacle.y) {
-            stopGame();
-            setMessage("💔 Çarptın! Tekrar dene!");
-          }
-        });
-
-        // Kalp toplama
-        hearts.forEach(heart => {
-          if (!heart.collected &&
-              char.x < heart.x + 30 &&
-              char.x + char.width > heart.x &&
-              char.y < heart.y + 30 &&
-              char.y + char.height > heart.y) {
-            
-            setHearts(prev => prev.map(h => 
-              h.id === heart.id ? { ...h, collected: true } : h
-            ));
-            
-            setGameState(prev => ({ ...prev, score: prev.score + 10 }));
-            setMessage("💖 Kalp topladın! +10 puan");
-            setTimeout(() => setMessage(""), 1500);
-          }
-        });
-      });
-    };
-
-    const interval = setInterval(checkCollisions, 16);
-    return () => clearInterval(interval);
-  }, [gameState.gameActive, characters, obstacles, hearts]);
-
-  // Engel ve kalp oluşturma
-  useEffect(() => {
-    if (!gameState.gameActive) return;
-
-    const obstacleInterval = setInterval(createObstacle, 2000);
-    const heartInterval = setInterval(createHeart, 3000);
-
-    return () => {
-      clearInterval(obstacleInterval);
-      clearInterval(heartInterval);
-    };
-  }, [gameState.gameActive]);
-
-  // Keyboard controls
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.code === 'Space' || e.code === 'ArrowUp') {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code === "Space" || e.code === "ArrowUp") {
         e.preventDefault();
         jump();
       }
     };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [running, isJumping]);
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [jump]);
+  // Game loop (RAF, delta based)
+  useEffect(() => {
+    if (!running) return;
+    const SPEED = 260; // px/s world speed
+
+    const tick = (ts: number) => {
+      const last = lastTsRef.current ?? ts;
+      const dt = Math.min(0.032, (ts - last) / 1000); // clamp 32ms
+      lastTsRef.current = ts;
+
+      // Spawn obstacles
+      spawnTimerRef.current += dt;
+      const spawnEvery = 1.2 + Math.max(0, 1.6 - score / 500); // slightly faster over time
+      if (spawnTimerRef.current > spawnEvery) {
+        spawnTimerRef.current = 0;
+        const h = 36 + Math.round(Math.random() * 12);
+        const w = 36 + Math.round(Math.random() * 18);
+        const xStart = (gameAreaRef.current?.clientWidth || 640) + 24;
+        setObstacles(prev => [...prev, { id: obstacleIdRef.current++, x: xStart, y: GROUND_TOP - h, width: w, height: h }]);
+      }
+
+      // Update player physics
+      setPlayerY(prev => {
+        const nextV = velY + GRAVITY * dt;
+        const groundY = GROUND_TOP - PLAYER_HEIGHT;
+        const nextY = Math.min(groundY, prev + nextV * dt);
+        if (nextY >= groundY) {
+          setVelY(0);
+          setIsJumping(false);
+          return groundY;
+        }
+        setVelY(nextV);
+        return nextY;
+      });
+
+      // Move obstacles and cull
+      setObstacles(prev => prev
+        .map(o => ({ ...o, x: o.x - SPEED * dt }))
+        .filter(o => o.x + o.width > -20)
+      );
+
+      // Score
+      setScore(s => s + Math.floor(100 * dt));
+
+      // Collision
+      const px = PLAYER_X;
+      const py = playerY;
+      const pw = PLAYER_WIDTH;
+      const ph = PLAYER_HEIGHT;
+      for (const o of obstacles) {
+        if (px < o.x + o.width && px + pw > o.x && py < o.y + o.height && py + ph > o.y) {
+          endGame();
+          break;
+        }
+      }
+
+      if (running) rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    };
+  }, [running, playerY, velY, obstacles, score]);
 
   return (
     <div className="min-h-screen p-4">
@@ -277,28 +150,28 @@ export default function WalkingGame() {
             <p className="text-gray-600">İki karakter birlikte koşuyor!</p>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-rose-600">Skor: {gameState.score}</div>
-            <div className="text-lg text-gray-600">Mesafe: {Math.floor(gameState.distance / 10)}m</div>
+            <div className="text-2xl font-bold text-rose-600">Skor: {score}</div>
+            <div className="text-lg text-gray-600">&nbsp;</div>
           </div>
         </div>
 
         {/* Game Area */}
         <div className="flex justify-center mb-6">
-          {!gameState.gameActive ? (
+          {!running ? (
             <div className="text-center">
-              <div className="bg-white/70 backdrop-blur rounded-2xl p-8 shadow-lg">
-                <h2 className="text-2xl font-display text-rose-600 mb-4">Birlikte Yürüme</h2>
-                <p className="text-gray-600 mb-6">
+              <div className="rounded-3xl bg-black/30 backdrop-blur ring-1 ring-rose-300/50 p-8 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                <h2 className="text-3xl font-display tracking-wide text-rose-400 mb-4">Birlikte Yürüme</h2>
+                <p className="text-white/80 mb-6 leading-relaxed">
                   İki karakter birlikte koşuyor!<br/>
                   Engelleri aş, kalpleri topla!<br/>
-                  <span className="text-sm">👨 Mavi (Ravy) | 👩 Bordo (Mami)</span>
+                  <span className="text-sm text-white/70">👨 İsimBir | 👩 İsimİki</span>
                 </p>
-                <div className="text-sm text-gray-500 mb-4">
-                  Kontroller: Space/↑ (Zıpla) | Touch (Mobil)
+                <div className="text-sm text-white/60 mb-6">
+                  Kontroller: Space/↑ (Zıpla) · Touch (Mobil)
                 </div>
                 <button
-                  onClick={startGame}
-                  className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium"
+                  onClick={resetGame}
+                  className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium shadow-sm shadow-rose-500/20"
                 >
                   Oyunu Başlat 🚶‍♂️
                 </button>
@@ -310,56 +183,33 @@ export default function WalkingGame() {
               className="relative w-full max-w-2xl h-80 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] overflow-hidden"
               onClick={jump}
             >
+              {/* Sky */}
+              <div className="absolute inset-0 bg-gradient-to-b from-sky-300 to-sky-200" />
               {/* Ground */}
-              <div className="absolute bottom-0 w-full h-20 bg-green-400"></div>
-              
-              {/* Characters */}
-              {characters.map(char => (
-                <div
-                  key={char.id}
-                  className="absolute text-4xl transition-all duration-100"
-                  style={{
-                    left: char.x,
-                    top: char.y,
-                    transform: char.isJumping ? 'scale(1.1)' : 'scale(1)'
-                  }}
-                >
-                  {char.emoji}
+              <div className="absolute bottom-0 w-full h-24 bg-gradient-to-b from-green-400 to-green-600" />
+
+              {/* Pixel couple */}
+              <div className="absolute" style={{ left: 96, top: playerY }}>
+                <div className="relative" style={{ width: 48, height: 44 }}>
+                  <div className="absolute left-[6px] top-0 h-4 w-4 rounded-sm bg-blue-500" />
+                  <div className="absolute left-[26px] top-0 h-4 w-4 rounded-sm bg-rose-500" />
+                  <div className="absolute left-[4px] top-4 h-6 w-8 bg-blue-600 rounded-sm" />
+                  <div className="absolute left-[24px] top-4 h-6 w-8 bg-rose-600 rounded-sm" />
+                  <div className="absolute left-[20px] top-6 h-2 w-8 bg-yellow-300 rounded-sm opacity-80" />
+                  <div className="absolute left-[8px] top-10 h-6 w-2 bg-blue-700" />
+                  <div className="absolute left-[14px] top-10 h-6 w-2 bg-blue-700" />
+                  <div className="absolute left-[28px] top-10 h-6 w-2 bg-rose-700" />
+                  <div className="absolute left-[34px] top-10 h-6 w-2 bg-rose-700" />
                 </div>
-              ))}
+              </div>
 
               {/* Obstacles */}
-              {obstacles.map(obstacle => (
+              {obstacles.map(o => (
                 <div
-                  key={obstacle.id}
-                  className={`absolute ${
-                    obstacle.type === 'rock' ? 'bg-gray-600 rounded-full' : 'bg-red-500'
-                  }`}
-                  style={{
-                    left: obstacle.x,
-                    top: obstacle.y,
-                    width: obstacle.width,
-                    height: obstacle.height
-                  }}
-                >
-                  {obstacle.type === 'rock' ? '🪨' : ''}
-                </div>
-              ))}
-
-              {/* Hearts */}
-              {hearts.map(heart => (
-                <div
-                  key={heart.id}
-                  className={`absolute text-2xl transition-all duration-300 ${
-                    heart.collected ? 'opacity-0 scale-0' : 'opacity-100 scale-100'
-                  }`}
-                  style={{
-                    left: heart.x,
-                    top: heart.y
-                  }}
-                >
-                  💖
-                </div>
+                  key={o.id}
+                  className="absolute bg-stone-700 border border-stone-500 rounded-sm shadow"
+                  style={{ left: o.x, top: o.y, width: o.width, height: o.height }}
+                />
               ))}
 
               {/* Instructions */}
@@ -371,22 +221,20 @@ export default function WalkingGame() {
         </div>
 
         {/* Game Complete */}
-        {gameState.gameComplete && (
+        {gameOver && (
           <div className="text-center">
-            <div className="bg-white/70 backdrop-blur rounded-2xl p-8 shadow-lg max-w-md mx-auto">
-              <h2 className="text-3xl font-display text-rose-600 mb-4">🏁 Oyun Bitti!</h2>
-              <p className="text-gray-600 mb-4">
-                Toplam Skor: <span className="font-bold text-rose-600">{gameState.score}</span>
+            <div className="rounded-3xl bg-black/30 backdrop-blur ring-1 ring-rose-300/50 p-8 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] max-w-md mx-auto">
+              <h2 className="text-3xl font-display tracking-wide text-rose-400 mb-4">🏁 Oyun Bitti!</h2>
+              <p className="text-white/80 mb-2">
+                Toplam Skor: <span className="font-bold text-rose-400">{score}</span>
               </p>
-              <p className="text-gray-600 mb-4">
-                Mesafe: <span className="font-bold text-rose-600">{Math.floor(gameState.distance / 10)}m</span>
-              </p>
-              <p className="text-sm text-rose-500 mb-6">
+              <p className="text-white/80 mb-4">Tekrar dene ve rekoru kır!</p>
+              <p className="text-sm text-white/60 mb-6">
                 &ldquo;Birlikte yürümek güzeldi!&rdquo; 💖
               </p>
               <button
-                onClick={startGame}
-                className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium"
+                onClick={resetGame}
+                className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium shadow-sm shadow-rose-500/20"
               >
                 Tekrar Oyna 🔄
               </button>
@@ -394,14 +242,7 @@ export default function WalkingGame() {
           </div>
         )}
 
-        {/* Message Popup */}
-        {message && (
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
-            <div className="bg-white/95 backdrop-blur rounded-2xl p-4 shadow-xl text-center animate-bounce">
-              <p className="text-xl font-medium text-rose-600">{message}</p>
-            </div>
-          </div>
-        )}
+        
       </div>
     </div>
   );
