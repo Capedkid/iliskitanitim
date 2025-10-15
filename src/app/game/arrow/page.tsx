@@ -212,17 +212,7 @@ export default function LoveArrowGame() {
   }, [gameActive, timeLeft]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-fuchsia-50 p-4">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div 
-          className="w-full h-full"
-          style={{
-            backgroundImage: "url('/patterns/romance-scatter.svg')",
-            backgroundSize: "320px 320px"
-          }}
-        />
-      </div>
+    <div className="min-h-screen p-4">
 
       <div className="relative z-10 max-w-4xl mx-auto">
         {/* Header */}
@@ -247,16 +237,16 @@ export default function LoveArrowGame() {
         <div className="flex justify-center mb-6">
           {!gameActive ? (
             <div className="text-center">
-              <div className="bg-white/70 backdrop-blur rounded-2xl p-8 shadow-lg">
-                <h2 className="text-2xl font-display text-rose-600 mb-4">Aşk Oku Oyunu</h2>
-                <p className="text-gray-600 mb-6">
+              <div className="rounded-3xl bg-black/30 backdrop-blur ring-1 ring-rose-300/50 p-8 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                <h2 className="text-3xl font-display tracking-wide text-rose-400 mb-4">Aşk Oku Oyunu</h2>
+                <p className="text-white/80 mb-6 leading-relaxed">
                   Romantik hedefleri vur ve puan kazan!<br/>
                   💖 Kalp: 100 puan | 🌹 Gül: 80 puan<br/>
                   ⭐ Yıldız: 60 puan | 💎 Elmas: 120 puan
                 </p>
                 <button
                   onClick={startGame}
-                  className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium"
+                  className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium shadow-sm shadow-rose-500/20"
                 >
                   Oyunu Başlat 🏹
                 </button>
@@ -265,7 +255,7 @@ export default function LoveArrowGame() {
           ) : (
             <div 
               ref={gameAreaRef}
-              className="relative w-full max-w-2xl h-96 bg-white/70 backdrop-blur rounded-2xl shadow-lg overflow-hidden border-2 border-rose-200 cursor-crosshair"
+              className="relative w-full max-w-2xl h-96 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] overflow-hidden cursor-crosshair"
               onClick={shootArrow}
             >
               {/* Targets */}

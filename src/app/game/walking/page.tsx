@@ -30,6 +30,9 @@ export default function WalkingGame() {
   const [running, setRunning] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
+  const [skyOffset, setSkyOffset] = useState(0);
+  const [groundOffset, setGroundOffset] = useState(0);
+  const [hitFlash, setHitFlash] = useState(false);
 
   const resetGame = () => {
     setPlayerY(GROUND_TOP - PLAYER_HEIGHT);
@@ -46,6 +49,8 @@ export default function WalkingGame() {
   const endGame = () => {
     setRunning(false);
     setGameOver(true);
+    setHitFlash(true);
+    setTimeout(() => setHitFlash(false), 180);
   };
 
   const jump = () => {
@@ -110,6 +115,10 @@ export default function WalkingGame() {
 
       // Score
       setScore(s => s + Math.floor(100 * dt));
+
+      // Parallax offsets
+      setSkyOffset((s) => (s + 20 * dt) % 1000);
+      setGroundOffset((g) => (g + SPEED * dt) % 1000);
 
       // Collision
       const px = PLAYER_X;
@@ -183,10 +192,41 @@ export default function WalkingGame() {
               className="relative w-full max-w-2xl h-80 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] overflow-hidden"
               onClick={jump}
             >
-              {/* Sky */}
-              <div className="absolute inset-0 bg-gradient-to-b from-sky-300 to-sky-200" />
+              {/* Sky (gradient + clouds) */}
+              <div
+                className="absolute inset-0"
+                style={{ background: 'linear-gradient(to bottom, #7ec8ff, #bfe7ff)' }}
+              />
+              <div
+                className="absolute inset-0 opacity-30"
+                style={{
+                  backgroundImage:
+                    'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.9) 0 20%, transparent 22%),' +
+                    'radial-gradient(circle at 70% 40%, rgba(255,255,255,0.9) 0 18%, transparent 20%),' +
+                    'radial-gradient(circle at 40% 65%, rgba(255,255,255,0.9) 0 16%, transparent 18%)',
+                  backgroundSize: '420px 220px, 420px 220px, 360px 200px',
+                  backgroundRepeat: 'repeat',
+                  backgroundPositionX: `${-skyOffset * 40}px, ${-skyOffset * 28}px, ${-skyOffset * 20}px`,
+                }}
+              />
               {/* Ground */}
               <div className="absolute bottom-0 w-full h-24 bg-gradient-to-b from-green-400 to-green-600" />
+              {/* Grass strip parallax */}
+              <div
+                className="absolute bottom-16 left-0 right-0 h-2 opacity-70"
+                style={{
+                  backgroundImage: 'repeating-linear-gradient(90deg, #22c55e 0 6px, #16a34a 6px 12px)',
+                  transform: `translateX(${-groundOffset * 0.6}px)`,
+                }}
+              />
+              {/* Dirt stripes */}
+              <div
+                className="absolute bottom-0 left-0 right-0 h-16 opacity-35"
+                style={{
+                  backgroundImage: 'repeating-linear-gradient(90deg, rgba(0,0,0,0.12) 0 8px, transparent 8px 16px)',
+                  transform: `translateX(${-groundOffset}px)`,
+                }}
+              />
 
               {/* Pixel couple */}
               <div className="absolute" style={{ left: 96, top: playerY }}>
@@ -207,7 +247,7 @@ export default function WalkingGame() {
               {obstacles.map(o => (
                 <div
                   key={o.id}
-                  className="absolute bg-stone-700 border border-stone-500 rounded-sm shadow"
+                  className="absolute bg-stone-700 border border-stone-500 rounded-sm shadow shadow-black/40"
                   style={{ left: o.x, top: o.y, width: o.width, height: o.height }}
                 />
               ))}
@@ -216,6 +256,7 @@ export default function WalkingGame() {
               <div className="absolute top-4 left-4 text-rose-600 text-sm bg-white/70 px-3 py-1 rounded-full">
                 Zıplamak için tıkla! 🦘
               </div>
+              {hitFlash && (<div className="absolute inset-0 bg-red-400/30" />)}
             </div>
           )}
         </div>

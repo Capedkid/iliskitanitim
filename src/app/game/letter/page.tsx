@@ -202,17 +202,7 @@ export default function LoveLetterGame() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-fuchsia-50 p-4">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div 
-          className="w-full h-full"
-          style={{
-            backgroundImage: "url('/patterns/romance-scatter.svg')",
-            backgroundSize: "320px 320px"
-          }}
-        />
-      </div>
+    <div className="min-h-screen p-4">
 
       <div className="relative z-10 max-w-4xl mx-auto">
         {/* Header */}
@@ -237,15 +227,15 @@ export default function LoveLetterGame() {
         <div className="flex justify-center mb-6">
           {!gameStarted ? (
             <div className="text-center">
-              <div className="bg-white/70 backdrop-blur rounded-2xl p-8 shadow-lg">
-                <h2 className="text-2xl font-display text-rose-600 mb-4">Aşk Mektubu Yazma</h2>
-                <p className="text-gray-600 mb-6">
+              <div className="rounded-3xl bg-black/30 backdrop-blur ring-1 ring-rose-300/50 p-8 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                <h2 className="text-3xl font-display tracking-wide text-rose-400 mb-4">Aşk Mektubu Yazma</h2>
+                <p className="text-white/80 mb-6">
                   Romantik cümlelerde eksik kelimeleri tamamla!<br/>
                   Her doğru kelimede kalp animasyonu gör! 💖
                 </p>
                 <button
                   onClick={startGame}
-                  className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium"
+                  className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium shadow-sm shadow-rose-500/20"
                 >
                   Oyunu Başlat 💌
                 </button>
@@ -254,15 +244,15 @@ export default function LoveLetterGame() {
           ) : !gameComplete ? (
             <div 
               ref={gameAreaRef}
-              className="bg-white/70 backdrop-blur rounded-2xl p-8 shadow-lg max-w-2xl w-full"
+              className="rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 p-8 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] max-w-2xl w-full"
             >
               {/* Current Sentence */}
               <div className="text-center mb-8">
-                <h3 className="text-xl font-display text-rose-600 mb-4">Cümleyi Tamamla</h3>
-                <div className="text-2xl text-gray-800 mb-4 leading-relaxed">
+                <h3 className="text-xl font-display text-rose-300 mb-4">Cümleyi Tamamla</h3>
+                <div className="text-2xl text-white/90 mb-4 leading-relaxed">
                   {currentSentence?.template.replace('___', '_____')}
                 </div>
-                <div className="text-sm text-gray-500 italic">
+                <div className="text-sm text-white/60 italic">
                   &ldquo;{currentSentence?.translation}&rdquo;
                 </div>
               </div>
@@ -280,7 +270,7 @@ export default function LoveLetterGame() {
                         ? word.isCorrect 
                           ? 'bg-green-100 text-green-700 border-2 border-green-300' 
                           : 'bg-red-100 text-red-700 border-2 border-red-300'
-                        : 'bg-rose-100 hover:bg-rose-200 text-rose-700 border-2 border-rose-200 hover:border-rose-300 hover:scale-105'
+                        : 'bg-white/10 hover:bg-white/20 text-white border-2 border-white/10 hover:border-white/20 hover:scale-105'
                       }
                     `}
                   >
@@ -290,32 +280,32 @@ export default function LoveLetterGame() {
               </div>
 
               {/* Progress */}
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+              <div className="w-full bg-white/10 rounded-full h-2 mb-4">
                 <div 
                   className="bg-rose-500 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${(level / 8) * 100}%` }}
                 ></div>
               </div>
-              <div className="text-center text-sm text-gray-600">
+              <div className="text-center text-sm text-white/70">
                 İlerleme: {level}/8 cümle
               </div>
             </div>
           ) : (
             <div className="text-center">
-              <div className="bg-white/70 backdrop-blur rounded-2xl p-8 shadow-lg max-w-md mx-auto">
-                <h2 className="text-3xl font-display text-rose-600 mb-4">🎉 Tebrikler!</h2>
-                <p className="text-gray-600 mb-4">
+              <div className="rounded-3xl bg-black/30 backdrop-blur ring-1 ring-rose-300/50 p-8 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] max-w-md mx-auto">
+                <h2 className="text-3xl font-display tracking-wide text-rose-400 mb-4">🎉 Tebrikler!</h2>
+                <p className="text-white/80 mb-4">
                   Tüm romantik cümleleri tamamladın!
                 </p>
-                <p className="text-lg font-bold text-rose-600 mb-4">
+                <p className="text-lg font-bold text-rose-300 mb-4">
                   Toplam Puan: {score}
                 </p>
-                <p className="text-sm text-rose-500 mb-6">
+                <p className="text-sm text-white/60 mb-6">
                   &ldquo;Aşk mektubun hazır!&rdquo; 💌
                 </p>
                 <button
                   onClick={restartGame}
-                  className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium"
+                  className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium shadow-sm shadow-rose-500/20"
                 >
                   Tekrar Oyna 🔄
                 </button>
@@ -327,8 +317,8 @@ export default function LoveLetterGame() {
         {/* Message */}
         {message && (
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
-            <div className="bg-white/95 backdrop-blur rounded-2xl p-4 shadow-xl text-center animate-bounce">
-              <p className="text-xl font-medium text-rose-600">{message}</p>
+            <div className="rounded-3xl bg-black/60 backdrop-blur ring-1 ring-rose-300/50 p-4 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] text-center animate-bounce">
+              <p className="text-xl font-medium text-rose-300">{message}</p>
             </div>
           </div>
         )}

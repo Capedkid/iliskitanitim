@@ -130,7 +130,7 @@ export default function MemoryGame() {
   }, [matches, gameStarted]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-fuchsia-50 p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -162,12 +162,12 @@ export default function MemoryGame() {
         <div className="flex justify-center mb-8">
           {!gameStarted ? (
             <div className="text-center">
-              <div className="bg-white/70 backdrop-blur rounded-2xl p-8 shadow-lg">
-                <h2 className="text-2xl font-display text-rose-600 mb-4">Oyunu Başlat</h2>
-                <p className="text-gray-600 mb-6">8 çifti bul ve romantik mesajları keşfet!</p>
+              <div className="rounded-3xl bg-black/30 backdrop-blur ring-1 ring-rose-300/50 p-8 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
+                <h2 className="text-3xl font-display tracking-wide text-rose-400 mb-4">Oyunu Başlat</h2>
+                <p className="text-white/80 mb-6">8 çifti bul ve romantik mesajları keşfet!</p>
                 <button
                   onClick={initializeGame}
-                  className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium"
+                  className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium shadow-sm shadow-rose-500/20"
                 >
                   Oyunu Başlat 💖
                 </button>
@@ -200,17 +200,17 @@ export default function MemoryGame() {
         {/* Game Complete */}
         {gameComplete && (
           <div className="text-center">
-            <div className="bg-white/70 backdrop-blur rounded-2xl p-8 shadow-lg max-w-md mx-auto">
-              <h2 className="text-3xl font-display text-rose-600 mb-4">🎉 Tebrikler!</h2>
-              <p className="text-gray-600 mb-4">
+            <div className="rounded-3xl bg-black/30 backdrop-blur ring-1 ring-rose-300/50 p-8 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] max-w-md mx-auto">
+              <h2 className="text-3xl font-display tracking-wide text-rose-400 mb-4">🎉 Tebrikler!</h2>
+              <p className="text-white/80 mb-4">
                 Tüm çiftleri {moves} hamlede buldun!
               </p>
-              <p className="text-sm text-rose-500 mb-6">
+              <p className="text-sm text-white/60 mb-6">
                 &ldquo;Seninle her gün bir hikaye&rdquo; 💖
               </p>
               <button
                 onClick={initializeGame}
-                className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium"
+                className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium shadow-sm shadow-rose-500/20"
               >
                 Tekrar Oyna 🔄
               </button>
@@ -221,12 +221,12 @@ export default function MemoryGame() {
         {/* Romantic Quote Popup */}
         {showQuote && (
           <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl max-w-sm mx-4 text-center animate-pulse">
+            <div className="rounded-3xl bg-black/60 backdrop-blur ring-1 ring-rose-300/50 p-6 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] max-w-sm mx-4 text-center">
               <div className="text-4xl mb-3">💖</div>
-              <p className="text-lg font-medium text-rose-600 mb-2">
+              <p className="text-lg font-medium text-rose-300 mb-2">
                 &ldquo;{showQuote.text}&rdquo;
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-white/70">
                 — {showQuote.author}
               </p>
             </div>

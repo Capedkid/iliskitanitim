@@ -85,23 +85,13 @@ export default function Game() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-20">
-        <div 
-          className="w-full h-full"
-          style={{
-            backgroundImage: "url('/patterns/romance-scatter.svg')",
-            backgroundSize: "320px 320px"
-          }}
-        />
-      </div>
+    <div className="min-h-screen p-4 text-white">
 
-      <div className="relative z-10 p-6">
+      <div className="relative z-10 p-2 sm:p-6 max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <Link href="/" className="font-display text-xl">
-            <span className="text-blue-400">R</span>avy <span className="text-red-400">&</span> <span className="text-white">M</span>ami
+          <Link href="/game/selection" className="inline-flex items-center gap-2 text-rose-300 hover:text-rose-200 transition-colors">
+            ← Oyunlar
           </Link>
           <div className="text-right">
             <div className="text-2xl font-bold">Skor: {score}</div>
@@ -114,14 +104,14 @@ export default function Game() {
           {!gameActive ? (
             <button
               onClick={startGame}
-              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-red-500 rounded-full text-xl font-bold hover:scale-105 transition-transform"
+              className="px-8 py-4 bg-rose-500 hover:bg-rose-600 rounded-full text-xl font-bold hover:scale-105 transition-transform shadow-sm shadow-rose-500/30"
             >
               Oyunu Başlat 💖
             </button>
           ) : (
             <button
               onClick={stopGame}
-              className="px-8 py-4 bg-gray-600 rounded-full text-xl font-bold hover:scale-105 transition-transform"
+              className="px-8 py-4 bg-white/10 rounded-full text-xl font-bold hover:scale-105 transition-transform"
             >
               Oyunu Durdur ⏸️
             </button>
@@ -140,7 +130,7 @@ export default function Game() {
         {/* Game Area */}
         <div
           ref={gameAreaRef}
-          className="relative w-full h-[600px] bg-black/30 backdrop-blur rounded-3xl border-2 border-white/20 overflow-hidden mx-auto max-w-4xl"
+          className="relative w-full h-[600px] rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] overflow-hidden mx-auto max-w-4xl"
           onMouseMove={(e) => {
             if (!gameActive) return;
             const rect = e.currentTarget.getBoundingClientRect();
@@ -179,7 +169,7 @@ export default function Game() {
               <div className="text-center">
                 <div className="text-4xl mb-4">💖</div>
                 <div className="text-xl mb-2">Kalp Toplama Oyunu</div>
-                <div className="text-gray-400">
+                <div className="text-white/70">
                   Düşen kalpleri yakala!<br />
                   Mavi ve bordo kalpler seni bekliyor 💙❤️
                 </div>
@@ -189,7 +179,7 @@ export default function Game() {
         </div>
 
         {/* Instructions */}
-        <div className="text-center mt-8 text-gray-400">
+        <div className="text-center mt-8 text-white/70">
           <p>💡 Kalplere tıklayarak veya fare ile yakalayarak puan kazan!</p>
           <p className="text-sm mt-2">Mobilde: Kalplere dokun!</p>
         </div>
