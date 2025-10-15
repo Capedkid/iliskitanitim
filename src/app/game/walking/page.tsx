@@ -261,17 +261,7 @@ export default function WalkingGame() {
   }, [jump]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-fuchsia-50 p-4">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div 
-          className="w-full h-full"
-          style={{
-            backgroundImage: "url('/patterns/romance-scatter.svg')",
-            backgroundSize: "320px 320px"
-          }}
-        />
-      </div>
+    <div className="min-h-screen p-4">
 
       <div className="relative z-10 max-w-4xl mx-auto">
         {/* Header */}
@@ -317,7 +307,7 @@ export default function WalkingGame() {
           ) : (
             <div 
               ref={gameAreaRef}
-              className="relative w-full max-w-2xl h-80 bg-gradient-to-b from-sky-200 to-green-200 rounded-2xl shadow-lg overflow-hidden border-2 border-rose-200"
+              className="relative w-full max-w-2xl h-80 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/50 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] overflow-hidden"
               onClick={jump}
             >
               {/* Ground */}

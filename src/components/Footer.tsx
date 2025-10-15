@@ -29,7 +29,7 @@ export default function Footer() {
           <div className="mt-8">
             <HeartDivider />
           </div>
-          <div className="mt-6 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/40 p-6">
+          <div className="mt-6 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/40 p-6 relative">
             <p className="text-white/80">"Kalbin kalbime değdiğinde, dünya sessizleşir."</p>
             <div className="mt-3 text-white/60">
               <Link href="/" className="hover:text-rose-300 transition-colors">Ana Sayfa</Link>
@@ -42,6 +42,21 @@ export default function Footer() {
               <span className="mx-2">·</span>
               <Link href="/game/selection" className="hover:text-rose-300 transition-colors">Oyun</Link>
             </div>
+
+            {/* Scroll to top button */}
+            <button
+              type="button"
+              aria-label="Yukarı dön"
+              onClick={() => {
+                try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch { window.scrollTo(0, 0); }
+              }}
+              className="flex items-center justify-center text-white hover:text-rose-300 transition-colors absolute right-4 bottom-4"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M12 5l7 7M12 5L5 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path d="M12 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
           </div>
         </div>
       </footer>

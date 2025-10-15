@@ -68,9 +68,9 @@ export default function HeaderHome() {
 
   return (
     <header className="px-6 sm:px-10 py-6 flex items-center justify-between relative">
-      <div className="font-display text-xl sm:text-2xl tracking-wide">
+      <Link href="/" className="font-display text-xl sm:text-2xl tracking-wide hover:opacity-90 transition-opacity" aria-label="Ana sayfa">
         <span className="text-ours-blue">İ</span>simBir <span className="text-ours-burgundy">&</span> <span className="text-black">İ</span>simİki
-      </div>
+      </Link>
       {/* Desktop nav */}
       <nav className="hidden sm:flex items-center gap-6 text-sm">
         <button 
