@@ -2,7 +2,7 @@
 
 import { useState, useRef, useMemo } from "react";
 import Link from "next/link";
-import { dailyNotes } from "@/lib/dailyNotes";
+import { letterNotes } from "@/lib/letterNotes";
 
 interface Word {
   text: string;
@@ -35,80 +35,121 @@ export default function LoveLetterGame() {
   const [hearts, setHearts] = useState<HeartAnimation[]>([]);
   const [message, setMessage] = useState("");
   const [gameStarted, setGameStarted] = useState(false);
+  const [answerLock, setAnswerLock] = useState(false);
   
   const heartIdRef = useRef(0);
   const gameAreaRef = useRef<HTMLDivElement>(null);
 
-  // Günün tarihine göre 10 adet ilham cümlesi seç (deterministik)
-  const letterSentences = useMemo(() => {
-    const n = dailyNotes.length;
-    if (n === 0) return [] as string[];
-    const now = new Date();
-    // Basit deterministik başlangıç: yıl+ay+gün toplamı mod n
-    const start = (now.getFullYear() + (now.getMonth() + 1) + now.getDate()) % n;
-    const picked: string[] = [];
-    for (let i = 0; i < Math.min(10, n); i++) {
-      picked.push(dailyNotes[(start + i) % n]);
-    }
-    return picked;
-  }, []);
+  // Romantik kelime havuzu - cümle dışından seçenekler
+  const romanticWords = [
+    "aşk", "kalp", "gülüş", "bahar", "huzur", "sevgi", "umut", "rüya", "mutluluk", "güzellik",
+    "tutku", "huzur", "sıcaklık", "yakınlık", "bağlılık", "güven", "saygı", "anlayış", "sabır", "hoşgörü",
+    "neşe", "coşku", "heyecan", "merak", "ilgi", "dikkat", "özen", "bakım", "koruma", "sahiplenme",
+    "paylaşım", "birliktelik", "uyum", "harmoni", "denge", "denklik", "eşitlik", "adalet", "dürüstlük", "samimiyet",
+    "içtenlik", "doğallık", "sadelik", "zarafet", "naziklik", "incelik", "hassasiyet", "duyarlılık", "empati", "şefkat",
+    "merhamet", "iyilik", "cömertlik", "fedakarlık", "özveri", "vazgeçiş", "terk", "ayrılık", "kavuşma", "buluşma",
+    "karşılaşma", "tanışma", "keşfetme", "öğrenme", "gelişme", "ilerleme", "büyüme", "olgunlaşma", "derinleşme", "güçlenme"
+  ];
 
-  // DailyNotes'tan tam 10 adet benzersiz cümleyi soru haline dönüştür
-  const romanticSentences: Sentence[] = useMemo(() => {
-    const n = dailyNotes.length;
-    if (n === 0) return [];
-    const now = new Date();
-    const start = (now.getFullYear() + (now.getMonth() + 1) + now.getDate()) % n;
+  // Replace first exact word (case-insensitive, Unicode) keeping spaces/punctuation
+  function replaceFirstWordWithBlank(sentence: string, targetWord: string): string {
+    if (!targetWord) return sentence;
+    const tokens = sentence.split(/(\s+)/); // keep spaces
+    let replaced = false;
+    for (let i = 0; i < tokens.length; i++) {
+      const t = tokens[i];
+      if (!replaced && t.localeCompare(targetWord, undefined, { sensitivity: 'accent' }) === 0) {
+        tokens[i] = '___';
+        replaced = true;
+        break;
+      }
+    }
+    if (replaced) return tokens.join('');
+    // Fallback: simple replace ignoring word boundaries
+    return sentence.replace(new RegExp(targetWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), '___');
+  }
+
+  const makeQuestion = (sentence: string, idx: number): Sentence => {
+    const words = sentence
+      .replace(/[.,!?:;…""'()\[\]]/g, " ")
+      .split(/\s+/)
+      .filter(Boolean);
+    // En uzun 4+ harfli kelimeyi seç; yoksa ilk kelimeyi kullan
+    const candidate = [...words]
+      .filter((w) => w.length >= 4)
+      .sort((a, b) => b.length - a.length)[0] || words[0] || "aşk";
+    const missing = candidate;
+    const template = replaceFirstWordWithBlank(sentence, missing);
+
+    // Yanlış şıklar: cümle dışından romantik kelimeler
+    const usedWords = new Set(words.map(w => w.toLowerCase()));
+    const availableDistractors = romanticWords.filter(word => 
+      !usedWords.has(word.toLowerCase()) && 
+      word.toLowerCase() !== missing.toLowerCase() &&
+      word.length >= 3
+    );
     
-    // 10 benzersiz cümle seç (döngüsel olarak)
-    const picked: string[] = [];
-    const used = new Set<string>();
-    let attempts = 0;
-    while (picked.length < 10 && attempts < n * 2) {
-      const idx = (start + picked.length) % n;
-      const sentence = dailyNotes[idx];
-      if (!used.has(sentence)) {
-        picked.push(sentence);
-        used.add(sentence);
+    // 3 yanlış şık seç
+    const shuffledDistractors = [...availableDistractors].sort(() => Math.random() - 0.5);
+    const distractors = shuffledDistractors.slice(0, 3);
+    
+    // Eğer yeterli distractor yoksa, genel kelimeler ekle
+    while (distractors.length < 3) {
+      const generalWords = ["zaman", "mekan", "an", "gün", "gece", "sabah", "akşam", "yıl", "ay", "hafta"];
+      const randomWord = generalWords[Math.floor(Math.random() * generalWords.length)];
+      if (!distractors.includes(randomWord) && !usedWords.has(randomWord.toLowerCase())) {
+        distractors.push(randomWord);
       }
-      attempts++;
     }
+    
+    const options = [missing, ...distractors.slice(0, 3)].sort(() => Math.random() - 0.5);
 
-    const fallbackDistractors = ["aşk", "kalp", "gülüş", "bahar", "huzur", "sevgi", "umut", "rüya"];
-
-    const makeQuestion = (sentence: string, idx: number): Sentence => {
-      const words = sentence
-        .replace(/[.,!?:;…“”"'()\[\]]/g, " ")
-        .split(/\s+/)
-        .filter(Boolean);
-      // En uzun 4+ harfli kelimeyi seç; yoksa ilk kelimeyi kullan
-      const candidate = [...words]
-        .filter((w) => w.length >= 4)
-        .sort((a, b) => b.length - a.length)[0] || words[0] || "aşk";
-      const missing = candidate;
-      const template = sentence.replace(new RegExp(`\\b${missing}\\b`), "___");
-
-      // Seçenekler: doğru + cümledeki diğer kelimelerden 2-3 tane + fallback
-      const pool = Array.from(new Set(words.filter((w) => w.toLowerCase() !== missing.toLowerCase() && w.length >= 3)));
-      while (pool.length < 3) {
-        const f = fallbackDistractors[Math.floor(Math.random() * fallbackDistractors.length)];
-        if (!pool.includes(f) && f.toLowerCase() !== missing.toLowerCase()) pool.push(f);
-      }
-      const distractors = pool.slice(0, 3);
-      const options = [missing, ...distractors].sort(() => Math.random() - 0.5);
-
-      return {
-        id: idx + 1,
-        template,
-        missingWord: missing,
-        options,
-        correctAnswer: missing,
-        translation: sentence,
-      };
+    return {
+      id: idx + 1,
+      template,
+      missingWord: missing,
+      options,
+      correctAnswer: missing,
+      translation: sentence,
     };
+  };
 
-    return picked.slice(0, 10).map((s, i) => makeQuestion(s, i));
-  }, []);
+  // LetterNotes'tan rastgele 10 adet benzersiz cümleyi soru haline dönüştür
+  const generateQuestions = (): Sentence[] => {
+    const n = letterNotes.length;
+    if (n === 0) return [];
+    
+    // Session'da kullanılan cümleleri al
+    const sessionKey = 'letterGame_usedSentences';
+    const usedInSession = JSON.parse(sessionStorage.getItem(sessionKey) || '[]') as string[];
+    
+    // Kullanılmamış cümleleri filtrele ve havuzu tekilleştir
+    const availableSentences = letterNotes.filter(sentence => !usedInSession.includes(sentence));
+    const uniqueAvailable = Array.from(new Set(availableSentences));
+    
+    // Eğer kullanılmamış cümle 10'dan azsa, session'ı sıfırla ve tekilleştir
+    if (uniqueAvailable.length < 10) {
+      sessionStorage.removeItem(sessionKey);
+      const uniqueAll = Array.from(new Set(letterNotes));
+      const shuffledAll = [...uniqueAll].sort(() => Math.random() - 0.5);
+      const pickedAll = shuffledAll.slice(0, 10);
+      // Yeni kullanılan cümleleri session'a kaydet
+      sessionStorage.setItem(sessionKey, JSON.stringify(pickedAll));
+      return pickedAll.map((s, i) => makeQuestion(s, i));
+    }
+    
+    // Rastgele 10 benzersiz cümle seç (session'dan hariç + tekil)
+    const shuffled = [...uniqueAvailable].sort(() => Math.random() - 0.5);
+    const picked = shuffled.slice(0, 10);
+    
+    // Yeni kullanılan cümleleri session'a ekle
+    const newUsedSentences = [...usedInSession, ...picked];
+    sessionStorage.setItem(sessionKey, JSON.stringify(newUsedSentences));
+
+    return picked.map((s, i) => makeQuestion(s, i));
+  };
+
+  const [romanticSentences, setRomanticSentences] = useState<Sentence[]>([]);
 
   // Kalp animasyonu oluştur
   const createHeartAnimation = (x: number, y: number) => {
@@ -129,38 +170,51 @@ export default function LoveLetterGame() {
 
   // Oyunu başlat
   const startGame = () => {
+    const newQuestions = generateQuestions();
+    // Initialize first question immediately to avoid early game-over
+    const firstSentence = newQuestions[0];
+    const shuffledOptions = firstSentence ? [...firstSentence.options].sort(() => Math.random() - 0.5) : [];
+    const words: Word[] = shuffledOptions.map((option) => ({
+      text: option,
+      isCorrect: option === (firstSentence?.correctAnswer ?? ""),
+      isSelected: false,
+    }));
+
+    setRomanticSentences(newQuestions);
+    setCurrentSentence(firstSentence ?? null);
+    setSelectedWords(words);
+
     setGameStarted(true);
     setScore(0);
     setLevel(1);
     setGameComplete(false);
     setMessage("");
     setHearts([]);
-    loadNextSentence();
+    setAnswerLock(false);
   };
 
   // Sonraki cümleyi yükle
-  const loadNextSentence = () => {
-    if (level >= romanticSentences.length) {
+  const loadNextSentence = (currentLevel?: number) => {
+    const targetLevel = currentLevel ?? level;
+    if (targetLevel > romanticSentences.length) {
       setGameComplete(true);
       return;
     }
-    
-    const sentence = romanticSentences[level - 1];
+    const sentence = romanticSentences[targetLevel - 1];
     setCurrentSentence(sentence);
-    
-    // Kelime seçeneklerini karıştır
     const shuffledOptions = [...sentence.options].sort(() => Math.random() - 0.5);
     const words: Word[] = shuffledOptions.map((option) => ({
       text: option,
       isCorrect: option === sentence.correctAnswer,
-      isSelected: false
+      isSelected: false,
     }));
-    
     setSelectedWords(words);
+    setAnswerLock(false);
   };
 
   // Kelime seç
   const selectWord = (wordIndex: number) => {
+    if (answerLock) return;
     const word = selectedWords[wordIndex];
     if (word.isSelected) return;
     
@@ -173,6 +227,7 @@ export default function LoveLetterGame() {
       // Doğru kelime!
       setScore(prev => prev + 10);
       setMessage("💖 Doğru! +10 puan");
+      setAnswerLock(true);
       
       // Kalp animasyonu
       if (gameAreaRef.current) {
@@ -185,13 +240,30 @@ export default function LoveLetterGame() {
       
       setTimeout(() => {
         setMessage("");
-        setLevel(prev => prev + 1);
-        loadNextSentence();
+        setLevel(prev => {
+          const newLevel = prev + 1;
+          // loadNextSentence'ı yeni level ile çağır
+          setTimeout(() => {
+            loadNextSentence(newLevel);
+          }, 0);
+          return newLevel;
+        });
       }, 1500);
     } else {
-      // Yanlış kelime
-      setMessage("❌ Yanlış! Tekrar dene");
-      setTimeout(() => setMessage(""), 2000);
+      // Yanlış kelime - skor alınamadan sonraki soruya geç
+      setMessage("❌ Yanlış cevap");
+      setAnswerLock(true);
+      setTimeout(() => {
+        setMessage("");
+        setLevel(prev => {
+          const newLevel = prev + 1;
+          // Sonraki soruyu yeni level ile yükle
+          setTimeout(() => {
+            loadNextSentence(newLevel);
+          }, 0);
+          return newLevel;
+        });
+      }, 1500);
     }
   };
 
@@ -256,9 +328,7 @@ export default function LoveLetterGame() {
                 <div className="text-2xl text-white/90 mb-4 leading-relaxed">
                   {currentSentence?.template.replace('___', '_____')}
                 </div>
-                <div className="text-sm text-white/60 italic">
-                  &ldquo;{currentSentence?.translation}&rdquo;
-                </div>
+                {/* Tam cümle ipucu kaldırıldı */}
               </div>
 
               {/* Word Options */}
@@ -267,7 +337,7 @@ export default function LoveLetterGame() {
                   <button
                     key={index}
                     onClick={() => selectWord(index)}
-                    disabled={word.isSelected}
+                    disabled={answerLock || word.isSelected}
                     className={`
                       p-4 rounded-xl text-lg font-medium transition-all duration-300
                       ${word.isSelected 
