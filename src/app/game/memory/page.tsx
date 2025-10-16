@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { dailyNotes } from "@/lib/dailyNotes";
 import Link from "next/link";
 
 interface Card {
@@ -25,17 +26,13 @@ export default function MemoryGame() {
   const [showQuote, setShowQuote] = useState<Quote | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
 
-  // Romantik quotes
-  const romanticQuotes: Quote[] = [
-    { text: "Seninle her gün bir hikaye", author: "İsimBir & İsimİki" },
-    { text: "Mavinin huzuru, bordonun tutkusu", author: "Bizim Renklerimiz" },
-    { text: "Kalplerin ilk kıvılcımı", author: "İlk Mesaj" },
-    { text: "Birlikte yürürken zaman yavaşlıyor", author: "Anılarımız" },
-    { text: "Küçük sürprizler, büyük gülüşler", author: "Özel Günler" },
-    { text: "Uzak değil, sadece adım adım", author: "Hayallerimiz" },
-    { text: "Seninle her an özel", author: "Aşkımız" },
-    { text: "Mavi ve bordo aynı karede", author: "Birlikteliğimiz" }
-  ];
+  // dailyNotes içinden 8 benzersiz not seç
+  const romanticQuotes: Quote[] = (() => {
+    const pool = Array.from(new Set(dailyNotes));
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    const picked = shuffled.slice(0, 8);
+    return picked.map(text => ({ text, author: "Bugünün Notları" }));
+  })();
 
   // Oyun kartları (4x4 = 16 kart, 8 çift)
   const cardContents = [
@@ -106,7 +103,7 @@ export default function MemoryGame() {
           // Romantik quote göster
           const randomQuote = romanticQuotes[Math.floor(Math.random() * romanticQuotes.length)];
           setShowQuote(randomQuote);
-          setTimeout(() => setShowQuote(null), 3000);
+          setTimeout(() => setShowQuote(null), 2000);
         }, 500);
       } else {
         // Eşleşme yok, kartları geri çevir
@@ -180,17 +177,38 @@ export default function MemoryGame() {
                   key={card.id}
                   onClick={() => handleCardClick(card.id)}
                   className={`
-                    w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold transition-all duration-300
-                    ${card.isFlipped || card.isMatched 
-                      ? 'bg-white shadow-lg scale-105' 
-                      : 'bg-rose-200 hover:bg-rose-300 shadow-md hover:shadow-lg'
-                    }
-                    ${card.isMatched ? 'ring-2 ring-rose-400' : ''}
-                    ${flippedCards.includes(card.id) ? 'animate-pulse' : ''}
+                    w-16 h-16 rounded-xl relative transition-all duration-300
+                    ${card.isMatched ? 'ring-2 ring-rose-400 shadow-[0_0_20px_rgba(235,80,120,0.45)]' : ''}
+                    ${!card.isMatched ? 'hover:scale-105' : ''}
                   `}
-                  disabled={card.isMatched}
+                  disabled={card.isMatched || flippedCards.length >= 2}
                 >
-                  {card.isFlipped || card.isMatched ? card.content : '?'}
+                  <div className="w-full h-full [perspective:800px]">
+                    <div
+                      className="w-full h-full rounded-xl relative [transform-style:preserve-3d] transition-transform duration-500 ease-out"
+                      style={{ transform: (card.isFlipped || card.isMatched) ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+                    >
+                      {/* Front face */}
+                      <div
+                        className={`absolute inset-0 rounded-xl flex items-center justify-center text-2xl font-bold
+                          bg-rose-200 shadow-md
+                          [backface-visibility:hidden]
+                        `}
+                      >
+                        ?
+                      </div>
+                      {/* Back face */}
+                      <div
+                        className={`absolute inset-0 rounded-xl flex items-center justify-center text-2xl font-bold
+                          bg-white shadow-lg
+                          [backface-visibility:hidden]
+                        `}
+                        style={{ transform: 'rotateY(180deg)' }}
+                      >
+                        {card.content}
+                      </div>
+                    </div>
+                  </div>
                 </button>
               ))}
             </div>
@@ -226,9 +244,7 @@ export default function MemoryGame() {
               <p className="text-lg font-medium text-rose-300 mb-2">
                 &ldquo;{showQuote.text}&rdquo;
               </p>
-              <p className="text-sm text-white/70">
-                — {showQuote.author}
-              </p>
+              {/* Author/sous-legend removed as requested */}
             </div>
           </div>
         )}

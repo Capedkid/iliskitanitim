@@ -12,10 +12,9 @@ export default function GamePage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-fuchsia-50 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <div className="text-4xl mb-4">💖</div>
-        <p className="text-rose-600">Oyunlar yükleniyor...</p>
       </div>
     </div>
   );
