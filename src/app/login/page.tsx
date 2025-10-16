@@ -32,9 +32,10 @@ export default function LoginPage() {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     if (password === "1234") {
-      // Store authentication in cookie
-      document.cookie = "authenticated=true; path=/; max-age=86400"; // 24 hours
-      router.push("/");
+      // Store authentication in cookie; ensure middleware sees it immediately
+      document.cookie = "authenticated=true; path=/; max-age=86400; samesite=lax"; // 24 hours
+      // Force full navigation so edge middleware reads fresh cookie in prod
+      window.location.assign("/");
     } else {
       setError("Yanlış şifre, tekrar dene 💔");
     }
