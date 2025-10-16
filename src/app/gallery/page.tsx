@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Lightbox from "@/components/Lightbox";
 
 function HeartDivider() {
@@ -160,11 +161,12 @@ export default function GalleryPage() {
                       className="relative overflow-hidden rounded-2xl ring-1 ring-rose-300/50 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 w-full"
                     >
                       <div className="aspect-square relative">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <Image
                           src={photo.src}
                           alt={photo.caption}
-                          className="h-full w-full object-cover group-hover:scale-[1.05] transition-transform duration-300"
+                          fill
+                          className="object-cover group-hover:scale-[1.05] transition-transform duration-300"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1536px) 25vw, 20vw"
                         />
                         {/* Overlay gradient */}
                         <div className="absolute inset-0 bg-gradient-to-br from-rose-50/20 via-white/5 to-rose-100/20" />

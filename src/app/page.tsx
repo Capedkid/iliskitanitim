@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import Lightbox from "@/components/Lightbox";
 import { useMiniPlayer } from "@/contexts/MiniPlayerContext";
 import { getTodayNote } from "@/lib/dailyNotes";
@@ -129,11 +130,13 @@ export default function Home() {
                   className="relative overflow-hidden rounded-3xl ring-1 ring-rose-300/50 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 w-full"
                 >
                   <div className="aspect-[4/3] relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={src} 
-                      alt={memoryCaptions[i] || `Anı ${i + 1}`} 
-                      className="h-full w-full object-cover group-hover:scale-[1.02] transition-transform"
+                    <Image
+                      src={src}
+                      alt={memoryCaptions[i] || `Anı ${i + 1}`}
+                      fill
+                      className="object-cover group-hover:scale-[1.02] transition-transform"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      priority={i === 0}
                     />
                     {/* Overlay gradient like hero */}
                     <div className="absolute inset-0 bg-gradient-to-br from-rose-50/20 via-white/5 to-rose-100/20" />
@@ -228,12 +231,14 @@ function ParallaxHeroImage() {
   return (
     <div ref={containerRef} className="relative overflow-hidden rounded-3xl ring-1 ring-rose-300/50 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
       <div className="bg-rose-50 relative">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          ref={imgRef}
+        <Image
+          ref={imgRef as any}
           src={src}
           alt="Hero"
+          width={1600}
+          height={900}
           className="w-full h-auto object-contain transition-transform duration-200 will-change-transform"
+          priority
         />
         {/* overlay gradient */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-rose-50/50 via-white/10 to-rose-100/50" />
