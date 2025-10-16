@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-type Obstacle = { id: number; x: number; y: number; width: number; height: number };
+type Obstacle = { id: number; x: number; y: number; width: number; height: number; scored: boolean };
 
 export default function WalkingGame() {
   const gameAreaRef = useRef<HTMLDivElement | null>(null);
@@ -90,7 +90,7 @@ export default function WalkingGame() {
         const h = 36 + Math.round(Math.random() * 12);
         const w = 36 + Math.round(Math.random() * 18);
         const xStart = (gameAreaRef.current?.clientWidth || 640) + 24;
-        setObstacles(prev => [...prev, { id: obstacleIdRef.current++, x: xStart, y: GROUND_TOP - h, width: w, height: h }]);
+        setObstacles(prev => [...prev, { id: obstacleIdRef.current++, x: xStart, y: GROUND_TOP - h, width: w, height: h, scored: false }]);
       }
 
       // Update player physics
@@ -107,14 +107,25 @@ export default function WalkingGame() {
         return nextY;
       });
 
-      // Move obstacles and cull
-      setObstacles(prev => prev
-        .map(o => ({ ...o, x: o.x - SPEED * dt }))
-        .filter(o => o.x + o.width > -20)
-      );
+      // Move obstacles, mark passed ones, increment score when passed
+      setObstacles(prev => {
+        let passedCount = 0;
+        const moved = prev
+          .map(o => {
+            const nx = o.x - SPEED * dt;
+            let scored = o.scored;
+            if (!scored && nx + o.width < PLAYER_X) {
+              scored = true;
+              passedCount += 1;
+            }
+            return { ...o, x: nx, scored };
+          })
+          .filter(o => o.x + o.width > -20);
+        if (passedCount > 0) setScore(s => s + passedCount);
+        return moved;
+      });
 
-      // Score
-      setScore(s => s + Math.floor(100 * dt));
+      // Score now increases per obstacle passed (handled above)
 
       // Parallax offsets
       setSkyOffset((s) => (s + 20 * dt) % 1000);
@@ -173,7 +184,7 @@ export default function WalkingGame() {
                 <p className="text-white/80 mb-6 leading-relaxed">
                   İki karakter birlikte koşuyor!<br/>
                   Engelleri aş, kalpleri topla!<br/>
-                  <span className="text-sm text-white/70">👨 İsimBir | 👩 İsimİki</span>
+                  {/* İsim ve emoji kaldırıldı */}
                 </p>
                 <div className="text-sm text-white/60 mb-6">
                   Kontroller: Space/↑ (Zıpla) · Touch (Mobil)
@@ -209,24 +220,14 @@ export default function WalkingGame() {
                   backgroundPositionX: `${-skyOffset * 40}px, ${-skyOffset * 28}px, ${-skyOffset * 20}px`,
                 }}
               />
-              {/* Ground */}
-              <div className="absolute bottom-0 w-full h-24 bg-gradient-to-b from-green-400 to-green-600" />
-              {/* Grass strip parallax */}
-              <div
-                className="absolute bottom-16 left-0 right-0 h-2 opacity-70"
-                style={{
-                  backgroundImage: 'repeating-linear-gradient(90deg, #22c55e 0 6px, #16a34a 6px 12px)',
-                  transform: `translateX(${-groundOffset * 0.6}px)`,
-                }}
-              />
-              {/* Dirt stripes */}
-              <div
-                className="absolute bottom-0 left-0 right-0 h-16 opacity-35"
-                style={{
-                  backgroundImage: 'repeating-linear-gradient(90deg, rgba(0,0,0,0.12) 0 8px, transparent 8px 16px)',
-                  transform: `translateX(${-groundOffset}px)`,
-                }}
-              />
+              {/* Ground - clean grass without tiling squares */}
+              <div className="absolute bottom-0 w-full h-24" style={{
+                background: 'linear-gradient(to bottom, #22c55e, #16a34a)'
+              }} />
+              {/* Grass edge (static highlight) */}
+              <div className="absolute bottom-24 left-0 right-0 h-2 opacity-80" style={{
+                background: 'linear-gradient(to right, rgba(255,255,255,0.25), rgba(255,255,255,0.15), rgba(255,255,255,0.25))'
+              }} />
 
               {/* Pixel couple */}
               <div className="absolute" style={{ left: 96, top: playerY }}>

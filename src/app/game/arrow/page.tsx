@@ -24,7 +24,7 @@ interface Arrow {
 
 export default function LoveArrowGame() {
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [gameActive, setGameActive] = useState(false);
   const [targets, setTargets] = useState<Target[]>([]);
   const [arrows, setArrows] = useState<Arrow[]>([]);
@@ -34,6 +34,22 @@ export default function LoveArrowGame() {
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const targetIdRef = useRef(0);
   const arrowIdRef = useRef(0);
+  const hitTargetsRef = useRef<Set<number>>(new Set());
+
+
+  // Simple particles on hit (match target emoji)
+  interface Particle { id: number; x: number; y: number; emoji: string; }
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const particleIdRef = useRef(0);
+  const spawnParticles = (x: number, y: number, emoji: string) => {
+    const items: Particle[] = Array.from({ length: 6 }).map((_, i) => ({
+      id: particleIdRef.current++, x: x + (Math.random() * 20 - 10), y: y + (Math.random() * 20 - 10), emoji
+    }));
+    setParticles(prev => [...prev, ...items]);
+    setTimeout(() => {
+      setParticles(prev => prev.filter(p => !items.some(i => i.id === p.id)));
+    }, 700);
+  };
 
   // Romantik mesajlar - useMemo ile optimize et
   const romanticMessages = useMemo(() => [
@@ -49,22 +65,24 @@ export default function LoveArrowGame() {
 
   // Hedef türleri - useMemo ile optimize et
   const targetTypes = useMemo(() => [
-    { type: 'heart' as const, emoji: '💖', points: 100, size: 60 },
-    { type: 'rose' as const, emoji: '🌹', points: 80, size: 50 },
-    { type: 'star' as const, emoji: '⭐', points: 60, size: 45 },
-    { type: 'diamond' as const, emoji: '💎', points: 120, size: 55 }
+    { type: 'heart' as const, emoji: '💖', points: 10, size: 60 },
+    { type: 'rose' as const, emoji: '🌹', points: 10, size: 50 },
+    { type: 'star' as const, emoji: '⭐', points: 10, size: 45 },
+    { type: 'diamond' as const, emoji: '💎', points: 10, size: 55 }
   ], []);
+  const typeToEmoji = useMemo(() => ({ heart: '💖', rose: '🌹', star: '⭐', diamond: '💎' }), []);
 
   const startGame = () => {
     setGameActive(true);
     setScore(0);
-    setTimeLeft(60);
+    setTimeLeft(30);
     setTargets([]);
     setArrows([]);
     setMessage("");
     setGameComplete(false);
     targetIdRef.current = 0;
     arrowIdRef.current = 0;
+    hitTargetsRef.current.clear();
   };
 
   const stopGame = () => {
@@ -118,7 +136,7 @@ export default function LoveArrowGame() {
       active: true
     };
     
-    setArrows(prev => [...prev, newArrow]);
+     setArrows(prev => [...prev, newArrow]);
   };
 
   // Ok hareketi
@@ -168,12 +186,13 @@ export default function LoveArrowGame() {
             t.id === hitTarget.id ? { ...t, hit: true } : t
           ));
           
-          setScore(prev => prev + hitTarget.points);
-          
-          // Romantik mesaj göster
-          const randomMessage = romanticMessages[Math.floor(Math.random() * romanticMessages.length)];
-          setMessage(randomMessage);
-          setTimeout(() => setMessage(""), 2000);
+          // Skor sadece bir kez artsın
+          if (!hitTargetsRef.current.has(hitTarget.id)) {
+            hitTargetsRef.current.add(hitTarget.id);
+            setScore(prev => prev + hitTarget.points);
+          }
+          // feedback: particles use same emoji as target
+          spawnParticles(arrow.x, arrow.y, typeToEmoji[hitTarget.type]);
           
           return { ...arrow, active: false };
         }
@@ -229,20 +248,20 @@ export default function LoveArrowGame() {
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold text-rose-600">Skor: {score}</div>
-            <div className="text-lg text-gray-600">Süre: {timeLeft}s</div>
+            <div className="text-lg font-bold text-rose-400">Süre: {timeLeft}s</div>
           </div>
         </div>
 
         {/* Game Area */}
         <div className="flex justify-center mb-6">
-          {!gameActive ? (
+          {!gameActive && !gameComplete ? (
             <div className="text-center">
               <div className="rounded-3xl bg-black/30 backdrop-blur ring-1 ring-rose-300/50 p-8 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
                 <h2 className="text-3xl font-display tracking-wide text-rose-400 mb-4">Aşk Oku Oyunu</h2>
                 <p className="text-white/80 mb-6 leading-relaxed">
                   Romantik hedefleri vur ve puan kazan!<br/>
-                  💖 Kalp: 100 puan | 🌹 Gül: 80 puan<br/>
-                  ⭐ Yıldız: 60 puan | 💎 Elmas: 120 puan
+                  Her hedef 10 puan değerinde!<br/>
+                  💖🌹⭐💎
                 </p>
                 <button
                   onClick={startGame}
@@ -281,7 +300,7 @@ export default function LoveArrowGame() {
               {arrows.map(arrow => (
                 <div
                   key={arrow.id}
-                  className="absolute text-2xl transition-all duration-100"
+                  className="absolute text-2xl transition-all duration-100 drop-shadow-[0_2px_8px_rgba(235,80,120,0.6)]"
                   style={{
                     left: arrow.x,
                     top: arrow.y,
@@ -289,6 +308,17 @@ export default function LoveArrowGame() {
                   }}
                 >
                   🏹
+                </div>
+              ))}
+
+              {/* Hit particles */}
+              {particles.map(p => (
+                <div
+                  key={p.id}
+                  className="absolute pointer-events-none animate-ping"
+                  style={{ left: p.x, top: p.y }}
+                >
+                  {p.emoji}
                 </div>
               ))}
 
@@ -303,17 +333,17 @@ export default function LoveArrowGame() {
         {/* Game Complete */}
         {gameComplete && (
           <div className="text-center">
-            <div className="bg-white/70 backdrop-blur rounded-2xl p-8 shadow-lg max-w-md mx-auto">
-              <h2 className="text-3xl font-display text-rose-600 mb-4">🎯 Oyun Bitti!</h2>
-              <p className="text-gray-600 mb-4">
-                Toplam Puan: <span className="font-bold text-rose-600">{score}</span>
+            <div className="rounded-3xl bg-black/30 backdrop-blur ring-1 ring-rose-300/50 p-8 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] max-w-md mx-auto">
+              <h2 className="text-3xl font-display tracking-wide text-rose-400 mb-4">🎯 Oyun Bitti!</h2>
+              <p className="text-white/80 mb-4">
+                Toplam Puan: <span className="font-bold text-rose-300">{score}</span>
               </p>
-              <p className="text-sm text-rose-500 mb-6">
+              <p className="text-sm text-white/60 mb-6">
                 &ldquo;Aşk oku ile hedefleri vurdun!&rdquo; 💖
               </p>
               <button
                 onClick={startGame}
-                className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium"
+                className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full transition-colors font-medium shadow-sm shadow-rose-500/20"
               >
                 Tekrar Oyna 🔄
               </button>
