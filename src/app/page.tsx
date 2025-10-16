@@ -136,7 +136,8 @@ export default function Home() {
                       fill
                       className="object-cover group-hover:scale-[1.02] transition-transform"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      priority={i === 0}
+                      loading="eager"
+                      priority
                     />
                     {/* Overlay gradient like hero */}
                     <div className="absolute inset-0 bg-gradient-to-br from-rose-50/20 via-white/5 to-rose-100/20" />

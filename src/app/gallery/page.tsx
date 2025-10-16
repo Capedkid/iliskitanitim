@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Lightbox from "@/components/Lightbox";
 
@@ -120,6 +120,14 @@ export default function GalleryPage() {
     setLightboxIndex((prev) => (prev - 1 + lightboxImages.length) % lightboxImages.length);
   };
 
+  // Preload all large images so Lightbox opens instantly
+  useEffect(() => {
+    lightboxImages.forEach((src) => {
+      const img = new window.Image();
+      img.src = src;
+    });
+  }, [lightboxImages]);
+
   return (
     <div className="min-h-screen">
       {/* Ana sayfadaki gibi arka plan zaten globals.css'de tanımlı */}
@@ -157,6 +165,11 @@ export default function GalleryPage() {
                 {photos.map((photo, index) => (
                   <div key={photo.id} className="group">
                     <button
+                      onMouseEnter={() => {
+                        // Hover prefetch for the hovered image
+                        const img = new window.Image();
+                        img.src = photo.src;
+                      }}
                       onClick={() => openLightbox(index)}
                       className="relative overflow-hidden rounded-2xl ring-1 ring-rose-300/50 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 w-full"
                     >
