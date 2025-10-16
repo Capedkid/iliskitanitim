@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 type Obstacle = { id: number; x: number; y: number; width: number; height: number; scored: boolean };
@@ -53,12 +53,12 @@ export default function WalkingGame() {
     setTimeout(() => setHitFlash(false), 180);
   };
 
-  const jump = () => {
+  const jump = useCallback(() => {
     if (!running) return;
     if (isJumping) return;
     setVelY(JUMP_VELOCITY);
     setIsJumping(true);
-  };
+  }, [running, isJumping]);
 
   // Input
   useEffect(() => {

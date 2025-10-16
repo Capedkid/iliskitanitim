@@ -98,7 +98,7 @@ export default function Game() {
     return () => clearInterval(timer);
   }, [gameActive, timeLeft]);
 
-  const catchHeart = (heartId: number, _color: 'blue' | 'burgundy') => {
+  const catchHeart = (heartId: number) => {
     setHearts(prev => prev.filter(h => h.id !== heartId));
     setScore(prev => prev + 1);
   };
@@ -160,7 +160,7 @@ export default function Game() {
             hearts.forEach(heart => {
               const distance = Math.sqrt((x - heart.x - 20) ** 2 + (y - heart.y - 20) ** 2);
               if (distance < 30) {
-                catchHeart(heart.id, heart.color);
+                catchHeart(heart.id);
               }
             });
           }}
@@ -176,7 +176,7 @@ export default function Game() {
                 left: heart.x,
                 top: heart.y,
               }}
-              onClick={() => catchHeart(heart.id, heart.color)}
+              onClick={() => catchHeart(heart.id)}
             >
               💖
             </div>
