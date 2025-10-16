@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import Link from "next/link";
+import { dailyNotes } from "@/lib/dailyNotes";
 
 interface Word {
   text: string;
@@ -38,73 +39,76 @@ export default function LoveLetterGame() {
   const heartIdRef = useRef(0);
   const gameAreaRef = useRef<HTMLDivElement>(null);
 
-  // Romantik cümleler
-  const romanticSentences: Sentence[] = [
-    {
-      id: 1,
-      template: "Seninle her ___ bir hikaye",
-      missingWord: "gün",
-      options: ["gün", "an", "saniye", "dakika"],
-      correctAnswer: "gün",
-      translation: "Seninle her gün bir hikaye"
-    },
-    {
-      id: 2,
-      template: "Mavinin ___ bordonun tutkusu",
-      missingWord: "huzuru",
-      options: ["huzuru", "sessizliği", "derinliği", "güzelliği"],
-      correctAnswer: "huzuru",
-      translation: "Mavinin huzuru bordonun tutkusu"
-    },
-    {
-      id: 3,
-      template: "Kalplerin ilk ___",
-      missingWord: "kıvılcımı",
-      options: ["kıvılcımı", "dokunuşu", "buluşması", "konuşması"],
-      correctAnswer: "kıvılcımı",
-      translation: "Kalplerin ilk kıvılcımı"
-    },
-    {
-      id: 4,
-      template: "Birlikte ___ zaman yavaşlıyor",
-      missingWord: "yürürken",
-      options: ["yürürken", "konuşurken", "gülerken", "bakarken"],
-      correctAnswer: "yürürken",
-      translation: "Birlikte yürürken zaman yavaşlıyor"
-    },
-    {
-      id: 5,
-      template: "Küçük ___ büyük gülüşler",
-      missingWord: "sürprizler",
-      options: ["sürprizler", "hediyeler", "anlar", "dokunuşlar"],
-      correctAnswer: "sürprizler",
-      translation: "Küçük sürprizler büyük gülüşler"
-    },
-    {
-      id: 6,
-      template: "Uzak değil sadece ___ adım",
-      missingWord: "adım",
-      options: ["adım", "bir", "tek", "son"],
-      correctAnswer: "adım",
-      translation: "Uzak değil sadece adım adım"
-    },
-    {
-      id: 7,
-      template: "Seninle her ___ özel",
-      missingWord: "an",
-      options: ["an", "gün", "saniye", "dakika"],
-      correctAnswer: "an",
-      translation: "Seninle her an özel"
-    },
-    {
-      id: 8,
-      template: "Mavi ve bordo ___ karede",
-      missingWord: "aynı",
-      options: ["aynı", "tek", "bir", "güzel"],
-      correctAnswer: "aynı",
-      translation: "Mavi ve bordo aynı karede"
+  // Günün tarihine göre 10 adet ilham cümlesi seç (deterministik)
+  const letterSentences = useMemo(() => {
+    const n = dailyNotes.length;
+    if (n === 0) return [] as string[];
+    const now = new Date();
+    // Basit deterministik başlangıç: yıl+ay+gün toplamı mod n
+    const start = (now.getFullYear() + (now.getMonth() + 1) + now.getDate()) % n;
+    const picked: string[] = [];
+    for (let i = 0; i < Math.min(10, n); i++) {
+      picked.push(dailyNotes[(start + i) % n]);
     }
-  ];
+    return picked;
+  }, []);
+
+  // DailyNotes'tan tam 10 adet benzersiz cümleyi soru haline dönüştür
+  const romanticSentences: Sentence[] = useMemo(() => {
+    const n = dailyNotes.length;
+    if (n === 0) return [];
+    const now = new Date();
+    const start = (now.getFullYear() + (now.getMonth() + 1) + now.getDate()) % n;
+    
+    // 10 benzersiz cümle seç (döngüsel olarak)
+    const picked: string[] = [];
+    const used = new Set<string>();
+    let attempts = 0;
+    while (picked.length < 10 && attempts < n * 2) {
+      const idx = (start + picked.length) % n;
+      const sentence = dailyNotes[idx];
+      if (!used.has(sentence)) {
+        picked.push(sentence);
+        used.add(sentence);
+      }
+      attempts++;
+    }
+
+    const fallbackDistractors = ["aşk", "kalp", "gülüş", "bahar", "huzur", "sevgi", "umut", "rüya"];
+
+    const makeQuestion = (sentence: string, idx: number): Sentence => {
+      const words = sentence
+        .replace(/[.,!?:;…“”"'()\[\]]/g, " ")
+        .split(/\s+/)
+        .filter(Boolean);
+      // En uzun 4+ harfli kelimeyi seç; yoksa ilk kelimeyi kullan
+      const candidate = [...words]
+        .filter((w) => w.length >= 4)
+        .sort((a, b) => b.length - a.length)[0] || words[0] || "aşk";
+      const missing = candidate;
+      const template = sentence.replace(new RegExp(`\\b${missing}\\b`), "___");
+
+      // Seçenekler: doğru + cümledeki diğer kelimelerden 2-3 tane + fallback
+      const pool = Array.from(new Set(words.filter((w) => w.toLowerCase() !== missing.toLowerCase() && w.length >= 3)));
+      while (pool.length < 3) {
+        const f = fallbackDistractors[Math.floor(Math.random() * fallbackDistractors.length)];
+        if (!pool.includes(f) && f.toLowerCase() !== missing.toLowerCase()) pool.push(f);
+      }
+      const distractors = pool.slice(0, 3);
+      const options = [missing, ...distractors].sort(() => Math.random() - 0.5);
+
+      return {
+        id: idx + 1,
+        template,
+        missingWord: missing,
+        options,
+        correctAnswer: missing,
+        translation: sentence,
+      };
+    };
+
+    return picked.slice(0, 10).map((s, i) => makeQuestion(s, i));
+  }, []);
 
   // Kalp animasyonu oluştur
   const createHeartAnimation = (x: number, y: number) => {
@@ -136,7 +140,7 @@ export default function LoveLetterGame() {
 
   // Sonraki cümleyi yükle
   const loadNextSentence = () => {
-    if (level > romanticSentences.length) {
+    if (level >= romanticSentences.length) {
       setGameComplete(true);
       return;
     }
@@ -219,7 +223,7 @@ export default function LoveLetterGame() {
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold text-rose-600">Skor: {score}</div>
-            <div className="text-lg text-gray-600">Seviye: {level}/8</div>
+            <div className="text-lg text-gray-600">Seviye: {level}/{romanticSentences.length}</div>
           </div>
         </div>
 
@@ -283,11 +287,11 @@ export default function LoveLetterGame() {
               <div className="w-full bg-white/10 rounded-full h-2 mb-4">
                 <div 
                   className="bg-rose-500 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${(level / 8) * 100}%` }}
+                  style={{ width: `${(level / 10) * 100}%` }}
                 ></div>
               </div>
               <div className="text-center text-sm text-white/70">
-                İlerleme: {level}/8 cümle
+                İlerleme: {level}/10 cümle
               </div>
             </div>
           ) : (
