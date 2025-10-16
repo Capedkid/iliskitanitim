@@ -30,7 +30,7 @@ export default function Footer() {
             <HeartDivider />
           </div>
           <div className="mt-6 rounded-3xl bg-black/20 backdrop-blur ring-1 ring-rose-300/40 p-6 relative">
-            <p className="text-white/80">"Kalbin kalbime değdiğinde, dünya sessizleşir."</p>
+            <p className="text-white/80">&ldquo;Kalbin kalbime değdiğinde, dünya sessizleşir.&rdquo;</p>
             <div className="mt-3 text-white/60">
               <Link href="/" className="hover:text-rose-300 transition-colors">Ana Sayfa</Link>
               <span className="mx-2">·</span>
