@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Lightbox from "@/components/Lightbox";
 import { useMiniPlayer } from "@/contexts/MiniPlayerContext";
+import { getTodayNote } from "@/lib/dailyNotes";
 
 function HeartDivider() {
   return (
@@ -36,6 +37,7 @@ export default function Home() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [todayNote, setTodayNote] = useState<string>("");
 
   // Smooth scroll function
   const scrollToSection = (sectionId: string) => {
@@ -59,6 +61,7 @@ export default function Home() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    setTodayNote(getTodayNote());
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -185,9 +188,7 @@ export default function Home() {
               </svg>
               <h2 className="font-display text-2xl tracking-tight text-white">Bugünün Notu</h2>
             </div>
-            <p className="text-white/80 leading-relaxed text-lg">
-              Güne senin sesinle başlamak, günün en güzel kısmı.
-            </p>
+            <p className="text-white/80 leading-relaxed text-lg min-h-[1.5rem]">{todayNote || ""}</p>
         </div>
         </section>
       </main>
