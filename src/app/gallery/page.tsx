@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import Lightbox from "@/components/Lightbox";
 
 function HeartDivider() {
@@ -120,14 +119,6 @@ export default function GalleryPage() {
     setLightboxIndex((prev) => (prev - 1 + lightboxImages.length) % lightboxImages.length);
   };
 
-  // Preload all large images so Lightbox opens instantly
-  useEffect(() => {
-    lightboxImages.forEach((src) => {
-      const img = new window.Image();
-      img.src = src;
-    });
-  }, [lightboxImages]);
-
   return (
     <div className="min-h-screen">
       {/* Ana sayfadaki gibi arka plan zaten globals.css'de tanımlı */}
@@ -165,21 +156,15 @@ export default function GalleryPage() {
                 {photos.map((photo, index) => (
                   <div key={photo.id} className="group">
                     <button
-                      onMouseEnter={() => {
-                        // Hover prefetch for the hovered image
-                        const img = new window.Image();
-                        img.src = photo.src;
-                      }}
                       onClick={() => openLightbox(index)}
                       className="relative overflow-hidden rounded-2xl ring-1 ring-rose-300/50 hover:shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)] hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 w-full"
                     >
                       <div className="aspect-square relative">
-                        <Image
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
                           src={photo.src}
                           alt={photo.caption}
-                          fill
-                          className="object-cover group-hover:scale-[1.05] transition-transform duration-300"
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1536px) 25vw, 20vw"
+                          className="h-full w-full object-cover group-hover:scale-[1.05] transition-transform duration-300"
                         />
                         {/* Overlay gradient */}
                         <div className="absolute inset-0 bg-gradient-to-br from-rose-50/20 via-white/5 to-rose-100/20" />
