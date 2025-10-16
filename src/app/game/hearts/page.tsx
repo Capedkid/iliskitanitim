@@ -15,7 +15,8 @@ export default function Game() {
   const [score, setScore] = useState(0);
   const [hearts, setHearts] = useState<Heart[]>([]);
   const [gameActive, setGameActive] = useState(false);
-  const [message, setMessage] = useState("");
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [gameComplete, setGameComplete] = useState(false);
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const heartIdRef = useRef(0);
 
@@ -23,12 +24,21 @@ export default function Game() {
     setGameActive(true);
     setScore(0);
     setHearts([]);
-    setMessage("");
+    setTimeLeft(30);
+    setGameComplete(false);
   };
 
   const stopGame = () => {
     setGameActive(false);
     setHearts([]);
+  };
+
+  const restartGame = () => {
+    setGameActive(false);
+    setGameComplete(false);
+    setScore(0);
+    setHearts([]);
+    setTimeLeft(30);
   };
 
   // Heart generation
@@ -69,19 +79,28 @@ export default function Game() {
     return () => clearInterval(interval);
   }, [gameActive]);
 
+  // Timer countdown
+  useEffect(() => {
+    if (!gameActive || timeLeft <= 0) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          setGameActive(false);
+          setGameComplete(true);
+          setHearts([]);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [gameActive, timeLeft]);
+
   const catchHeart = (heartId: number, color: 'blue' | 'burgundy') => {
     setHearts(prev => prev.filter(h => h.id !== heartId));
     setScore(prev => prev + 1);
-    
-    const messages = {
-      blue: ["Mavi kalp yakalandı! 💙", "Senin rengin! 💙", "Mavi huzur! 💙"],
-      burgundy: ["Bordo kalp yakalandı! ❤️", "Onun rengi! ❤️", "Bordo tutku! ❤️"]
-    };
-    
-    const randomMessage = messages[color][Math.floor(Math.random() * messages[color].length)];
-    setMessage(randomMessage);
-    
-    setTimeout(() => setMessage(""), 2000);
   };
 
   return (
@@ -95,37 +114,37 @@ export default function Game() {
           </Link>
           <div className="text-right">
             <div className="text-2xl font-bold">Skor: {score}</div>
+            <div className="text-lg font-bold text-rose-400">Süre: {timeLeft}s</div>
             <div className="text-sm text-gray-400">Kalp Toplama Oyunu</div>
           </div>
         </div>
 
         {/* Game Controls */}
         <div className="text-center mb-8">
-          {!gameActive ? (
+          {!gameActive && !gameComplete ? (
             <button
               onClick={startGame}
               className="px-8 py-4 bg-rose-500 hover:bg-rose-600 rounded-full text-xl font-bold hover:scale-105 transition-transform shadow-sm shadow-rose-500/30"
             >
               Oyunu Başlat 💖
             </button>
-          ) : (
+          ) : gameActive ? (
             <button
               onClick={stopGame}
               className="px-8 py-4 bg-white/10 rounded-full text-xl font-bold hover:scale-105 transition-transform"
             >
               Oyunu Durdur ⏸️
             </button>
-          )}
+          ) : gameComplete ? (
+            <button
+              onClick={restartGame}
+              className="px-8 py-4 bg-rose-500 hover:bg-rose-600 rounded-full text-xl font-bold hover:scale-105 transition-transform shadow-sm shadow-rose-500/30"
+            >
+              Tekrar Oyna 🔄
+            </button>
+          ) : null}
         </div>
 
-        {/* Message */}
-        {message && (
-          <div className="text-center mb-4">
-            <div className="inline-block bg-white/20 backdrop-blur px-6 py-3 rounded-full text-lg font-medium">
-              {message}
-            </div>
-          </div>
-        )}
 
         {/* Game Area */}
         <div
@@ -164,14 +183,28 @@ export default function Game() {
           ))}
 
           {/* Instructions */}
-          {!gameActive && (
+          {!gameActive && !gameComplete && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
                 <div className="text-4xl mb-4">💖</div>
                 <div className="text-xl mb-2">Kalp Toplama Oyunu</div>
                 <div className="text-white/70">
-                  Düşen kalpleri yakala!<br />
+                  30 saniyede düşen kalpleri yakala!<br />
                   Mavi ve bordo kalpler seni bekliyor 💙❤️
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Game Complete */}
+          {gameComplete && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-4xl mb-4">🎉</div>
+                <div className="text-xl mb-2">Oyun Tamamlandı!</div>
+                <div className="text-white/70">
+                  Toplam {score} kalp yakaladın!<br />
+                  Tebrikler! 💖
                 </div>
               </div>
             </div>

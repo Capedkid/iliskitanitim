@@ -132,7 +132,7 @@ export default function MemoryGame() {
         {/* Header */}
         <div className="text-center mb-8">
           <Link 
-            href="/game" 
+            href="/game/selection" 
             className="inline-flex items-center gap-2 text-rose-600 hover:text-rose-700 transition-colors mb-4"
           >
             ← Geri Dön
