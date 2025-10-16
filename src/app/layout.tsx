@@ -32,7 +32,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "A & B — Bizim hikayemiz",
   description: "A romantic journey told with memories, messages and music.",
-  icons: { icon: "/favicon.ico" },
+  icons: { icon: "/favicon.svg" },
   metadataBase: new URL("https://example.com"),
   openGraph: {
     title: "A & B",

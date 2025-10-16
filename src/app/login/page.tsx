@@ -31,7 +31,7 @@ export default function LoginPage() {
     // Simulate loading
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    if (password === "1309") {
+    if (password === "1234") {
       // Store authentication in cookie
       document.cookie = "authenticated=true; path=/; max-age=86400"; // 24 hours
       router.push("/");
