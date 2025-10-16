@@ -35,7 +35,6 @@ export default function Home() {
   ];
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [activeId, setActiveId] = useState<string | null>(null);
   const [todayNote, setTodayNote] = useState<string>("");
 
   // Smooth scroll function
@@ -62,12 +61,7 @@ export default function Home() {
     if (typeof window === "undefined") return;
     setTodayNote(getTodayNote());
     const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible && visible.target.id) setActiveId(visible.target.id);
-      },
+      () => {},
       { rootMargin: "-40% 0px -55% 0px", threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] }
     );
     sectionsRef.current.forEach((s) => s.el && observer.observe(s.el));

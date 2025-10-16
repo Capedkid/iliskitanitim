@@ -31,7 +31,7 @@ export default function WalkingGame() {
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [skyOffset, setSkyOffset] = useState(0);
-  const [groundOffset, setGroundOffset] = useState(0);
+  // groundOffset kaldırıldı (kullanılmıyor)
   const [hitFlash, setHitFlash] = useState(false);
 
   const resetGame = () => {
@@ -129,7 +129,7 @@ export default function WalkingGame() {
 
       // Parallax offsets
       setSkyOffset((s) => (s + 20 * dt) % 1000);
-      setGroundOffset((g) => (g + SPEED * dt) % 1000);
+      // ground parallax kaldırıldı
 
       // Collision
       const px = PLAYER_X;

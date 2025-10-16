@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { letterNotes } from "@/lib/letterNotes";
 

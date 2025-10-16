@@ -98,7 +98,7 @@ export default function Game() {
     return () => clearInterval(timer);
   }, [gameActive, timeLeft]);
 
-  const catchHeart = (heartId: number, color: 'blue' | 'burgundy') => {
+  const catchHeart = (heartId: number, _color: 'blue' | 'burgundy') => {
     setHearts(prev => prev.filter(h => h.id !== heartId));
     setScore(prev => prev + 1);
   };

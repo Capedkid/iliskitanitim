@@ -24,7 +24,6 @@ export default function GlobalMiniPlayer() {
     toggleRepeat,
     setIsPlaying,
     setHasStartedPlaying,
-    setCurrentTrackIndex,
   } = useMiniPlayer();
 
   const pathname = usePathname();
