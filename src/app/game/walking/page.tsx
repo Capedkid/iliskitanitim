@@ -70,7 +70,7 @@ export default function WalkingGame() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [running, isJumping]);
+  }, [running, isJumping, jump]);
 
   // Game loop (RAF, delta based)
   useEffect(() => {
@@ -151,7 +151,7 @@ export default function WalkingGame() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     };
-  }, [running, playerY, velY, obstacles, score]);
+  }, [running, playerY, velY, obstacles, score, GROUND_TOP]);
 
   return (
     <div className="min-h-screen p-4">
@@ -210,7 +210,7 @@ export default function WalkingGame() {
               />
               <div
                 className="absolute inset-0 opacity-30"
-                style={{
+                  style={{
                   backgroundImage:
                     'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.9) 0 20%, transparent 22%),' +
                     'radial-gradient(circle at 70% 40%, rgba(255,255,255,0.9) 0 18%, transparent 20%),' +

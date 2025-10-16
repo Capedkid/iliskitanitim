@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
 import Lightbox from "@/components/Lightbox";
 import { useMiniPlayer } from "@/contexts/MiniPlayerContext";
 import { getTodayNote } from "@/lib/dailyNotes";
@@ -73,7 +72,7 @@ export default function Home() {
     );
     sectionsRef.current.forEach((s) => s.el && observer.observe(s.el));
     return () => observer.disconnect();
-  }, []);
+  }, [setTodayNote]);
 
   return (
     <div className="min-h-dvh flex flex-col">

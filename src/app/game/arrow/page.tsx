@@ -41,15 +41,15 @@ export default function LoveArrowGame() {
   interface Particle { id: number; x: number; y: number; emoji: string; }
   const [particles, setParticles] = useState<Particle[]>([]);
   const particleIdRef = useRef(0);
-  const spawnParticles = (x: number, y: number, emoji: string) => {
-    const items: Particle[] = Array.from({ length: 6 }).map((_, i) => ({
+  const spawnParticles = useCallback((x: number, y: number, emoji: string) => {
+    const items: Particle[] = Array.from({ length: 6 }).map(() => ({
       id: particleIdRef.current++, x: x + (Math.random() * 20 - 10), y: y + (Math.random() * 20 - 10), emoji
     }));
     setParticles(prev => [...prev, ...items]);
     setTimeout(() => {
       setParticles(prev => prev.filter(p => !items.some(i => i.id === p.id)));
     }, 700);
-  };
+  }, []);
 
   // Romantik mesajlar - useMemo ile optimize et
   const romanticMessages = useMemo(() => [
@@ -203,7 +203,7 @@ export default function LoveArrowGame() {
     
     const interval = setInterval(checkCollisions, 16);
     return () => clearInterval(interval);
-  }, [gameActive, targets, romanticMessages]);
+  }, [gameActive, targets, romanticMessages, spawnParticles, typeToEmoji]);
 
   // Hedef oluşturma
   useEffect(() => {
