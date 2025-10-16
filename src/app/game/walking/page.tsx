@@ -58,7 +58,7 @@ export default function WalkingGame() {
     if (isJumping) return;
     setVelY(JUMP_VELOCITY);
     setIsJumping(true);
-  }, [running, isJumping]);
+  }, [running, isJumping, JUMP_VELOCITY]);
 
   // Input
   useEffect(() => {
