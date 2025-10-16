@@ -232,7 +232,7 @@ function ParallaxHeroImage() {
     <div ref={containerRef} className="relative overflow-hidden rounded-3xl ring-1 ring-rose-300/50 shadow-[0_20px_60px_-20px_rgba(235,80,120,0.35)]">
       <div className="bg-rose-50 relative">
         <Image
-          ref={imgRef as any}
+          ref={imgRef}
           src={src}
           alt="Hero"
           width={1600}
