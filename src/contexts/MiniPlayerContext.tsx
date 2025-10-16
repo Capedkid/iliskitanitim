@@ -144,13 +144,8 @@ export function MiniPlayerProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, [currentTrackIndex, volume]);
 
-  const currentTrack = playlist[currentTrackIndex] || playlist[0] || lastTrack || {
-    id: 1,
-    title: "Şarkı Seçilmedi",
-    artist: "Henüz müzik çalmadınız", 
-    src: "",
-    duration: "0:00"
-  };
+  // currentTrack bilgisi UI'da doğrudan context dışından okunuyor; burada değişken oluşturmak yerine
+  // doğrudan lastTrack/playlist referanslarını kullanıyoruz (lint: no-unused-vars uyarılarını engeller)
 
   const onTogglePlay = async () => {
     if (!audioRef.current) return;

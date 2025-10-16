@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type MiniPlayerProps = {
   getAudio: () => HTMLAudioElement | null;
@@ -27,9 +27,9 @@ export default function MiniPlayer({
   getAudio, 
   currentTrack,
   isPlayingProp,
-  playlist,
-  currentIndex,
-  onSelectTrack,
+  // playlist,
+  // currentIndex,
+  // onSelectTrack,
   onNext,
   onPrevious,
   onVolumeChange,
@@ -98,7 +98,7 @@ export default function MiniPlayer({
 
   // removed auto-hide lifecycle
 
-  const toggle = async () => {
+  const toggle = useCallback(async () => {
     // Hero'daki aynı fonksiyonu kullan
     if (onTogglePlay) {
       const a = getAudio();
@@ -115,7 +115,7 @@ export default function MiniPlayer({
         audio.pause();
       }
     }
-  };
+  }, [getAudio, onTogglePlay]);
 
   // Keyboard shortcuts
   useEffect(() => {
